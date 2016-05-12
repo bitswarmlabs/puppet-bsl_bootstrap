@@ -12,8 +12,11 @@
 
 . /lib/lsb/init-functions
 
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::init_service_log') %>'
+PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+
 do_start () {
-  log_begin_msg "bsl_bootstrap startup provisioning begins"
+  log_begin_msg "bsl_bootstrap startup provisioning begins via ${PUPPET}"
 
   <%= scope.lookupvar('bsl_bootstrap::init_service_facter_vars') -%> $PUPPET apply \
     --show_diff --verbose --certname='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' \
@@ -27,8 +30,6 @@ do_start () {
 case "$1" in
   start)
     do_start
-
-    exit 0
   ;;
   *)
   echo "Usage: $0 {start}" >&2
