@@ -1,0 +1,32 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          bsl_buppet
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: bsl_bootstrap provisioning
+# Description:       Startup Puppet provisioning using bsl_puppet::setup
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+do_start () {
+  log_begin_msg "bsl_bootstrap startup provisioning begins"
+
+  <% scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply --show_diff --verbose --certname='<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' --environment='<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' -e 'class { '\''<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' 2>&1 | tee -a $LOGFILE
+  log_end_msg $?
+}
+
+case "$1" in
+  start)
+    do_start
+
+    exit 0
+  ;;
+  *)
+  echo "Usage: $0 {start}" >&2
+  exit 1
+  ;;
+esac

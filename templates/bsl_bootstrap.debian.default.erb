@@ -1,0 +1,6 @@
+###########################################
+# Init settings for bsl_bootstrap
+###########################################
+
+LOGFILE=<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_log') %>
+PUPPET=<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::puppet_binary') %>
