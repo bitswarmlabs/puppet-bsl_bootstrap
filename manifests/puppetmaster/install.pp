@@ -48,28 +48,19 @@
 #
 # Copyright 2016 Bitswarm Labs
 #
-class bsl_bootstrap::puppetmaster::install(
-) {
+class bsl_bootstrap::puppetmaster::install {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  $bootstrap_certname = 'puppet.local'
-  $bootstrap_classname = 'bsl_bootstrap::setup::puppetmaster'
-
-  file { $bsl_bootstrap::puppetmaster::config::init_service:
+  file { $bsl_bootstrap::init_service:
     ensure  => file,
     mode    => "0755",
-    content => template("bsl_bootstrap/${bsl_bootstrap::puppetmaster::config::init_service_tmpl}.erb")
+    content => template("bsl_bootstrap/${bsl_bootstrap::init_service_tmpl}.erb")
   }
 
-  file { $bsl_bootstrap::puppetmaster::config::init_config:
+  file { $bsl_bootstrap::init_config:
     ensure  => file,
     mode    => "0644",
-    content => template("bsl_bootstrap/${bsl_bootstrap::puppetmaster::config::init_config_tmpl}.erb")
-  }
-
-  file { '/etc/facter/facts.d/bitswarmlabs.yaml':
-    ensure => file,
-    content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")
+    content => template("bsl_bootstrap/${bsl_bootstrap::init_config_tmpl}.erb")
   }
 }

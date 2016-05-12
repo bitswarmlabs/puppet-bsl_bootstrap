@@ -23,14 +23,9 @@
 #
 class bsl_bootstrap::puppetmaster::prepare
 {
-  include 'bsl_bootstrap'
-
-  include 'bsl_bootstrap::puppetmaster::config'
-  include 'bsl_bootstrap::puppetmaster::install'
-
   include 'bsl_puppet::server'
-
-  include 'bsl_bootstrap::puppetmaster::setup'
-
   include 'bsl_puppet::server::facter'
+
+  include 'bsl_bootstrap::puppetmaster::install'
+  include 'bsl_bootstrap::puppetmaster::setup'
 }

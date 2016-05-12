@@ -15,7 +15,12 @@
 do_start () {
   log_begin_msg "bsl_bootstrap startup provisioning begins"
 
-  <% scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply --show_diff --verbose --certname='<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' --environment='<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' -e 'class { '\''<% scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' 2>&1 | tee -a $LOGFILE
+  <%= scope.lookupvar('bsl_bootstrap::init_service_facter_vars') -%> $PUPPET apply \
+    --show_diff --verbose --certname='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' \
+    --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
+    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' 2>&1 \
+  | tee -a $LOGFILE
+
   log_end_msg $?
 }
 

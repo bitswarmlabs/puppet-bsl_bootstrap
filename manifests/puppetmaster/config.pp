@@ -57,5 +57,11 @@ class bsl_bootstrap::puppetmaster::config(
   $r10k_init_deploy_enabled = false,
   $target_certname = 'puppet.local',
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-) inherits bsl_bootstrap::params {
+  $environment = "${::environment}",
+  $init_service_facter_vars = ""
+) {
+  file { '/etc/facter/facts.d/bitswarmlabs.yaml':
+    ensure => file,
+    content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")
+  }
 }

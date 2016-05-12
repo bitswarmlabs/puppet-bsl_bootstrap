@@ -22,7 +22,8 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::setup {
-  include 'bsl_bootstrap'
+  hiera_include('classes')
+  include 'bsl_bootstrap::puppetmaster::config'
 
   if $bsl_bootstrap::puppetmaster::config::manage_hostname {
     include 'bsl_puppet::server::hostname'
