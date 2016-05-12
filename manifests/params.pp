@@ -15,12 +15,12 @@
 #
 class bsl_bootstrap::params {
   $bsl_bootstrap_scm_clone_url = 'https://github.com/bitswarmlabs/puppet-bsl_bootstrap.git'
-  $bsl_bootstrap_module_home = "/etc/puppetlabs/code/modules"
+  $bsl_bootstrap_module_home = "/etc/puppetlabs/code/modules/bsl_bootstrap"
   $bsl_bootstrap_module_version = 'present'
 
   $init_service_log = '/var/log/bsl_bootstrap'
   $puppet_binary = '/opt/puppetlabs/bin/puppet'
-  
+
   # OS specific paths
   case $::osfamily {
     'RedHat': {

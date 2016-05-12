@@ -35,6 +35,7 @@ class bsl_bootstrap(
     'latest'                   => 'latest',
     default                    => 'present',
   }
+
   vcsrepo { $bsl_bootstrap_module_home:
     ensure   => $ensure,
     provider => git,
