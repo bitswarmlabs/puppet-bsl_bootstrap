@@ -1,48 +1,45 @@
 # Class: bsl_bootstrap
 # ===========================
 #
-# Full description of class bsl_bootstrap here.
-#
-# Parameters
-# ----------
-#
-# Document parameters here.
-#
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
-#
-# Variables
-# ----------
-#
-# Here you should define a list of variables that this module would require.
-#
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
+# For use in bootstrapping base images such as Puppetmaster.
 #
 # Examples
 # --------
 #
 # @example
 #    class { 'bsl_bootstrap':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#      bsl_bootstrap_scm_clone_url => 'https://mygitrepo/puppet-bsl_bootstrap.git',
 #    }
 #
 # Authors
 # -------
 #
-# Author Name <author@domain.com>
+# Reuben Avery <ravery@bitswarm.io>
 #
 # Copyright
 # ---------
 #
-# Copyright 2016 Your name here, unless otherwise noted.
+# Copyright 2016 Bitswarm Labs
 #
-class bsl_bootstrap {
+class bsl_bootstrap(
+  $bsl_bootstrap_module_clone_url = $bsl_bootstrap::params::bsl_bootstrap_scm_clone_url,
+  $bsl_bootstrap_module_home = $bsl_bootstrap::params::bsl_bootstrap_module_home,
+  $bsl_bootstrap_module_version = $bsl_bootstrap::params::bsl_bootstrap_module_version,
+) inherits bsl_bootstrap::params {
+  file { $bsl_bootstrap_module_home:
+    ensure => directory,
+  }
 
+  $ensure = $bsl_bootstrap_module_version ? {
+    /([vV]?([0-9]+\.)*[0-9]+)/ => $bsl_bootstrap_module_version,
+    'latest'                   => 'latest',
+    default                    => 'present',
+  }
 
+  vcsrepo { $bsl_bootstrap_module_home:
+    ensure   => $ensure,
+    provider => git,
+    source   => $bsl_bootstrap_scm_clone_url,
+    revision => 'master',
+  }
 }
