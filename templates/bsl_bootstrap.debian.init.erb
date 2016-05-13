@@ -12,17 +12,20 @@
 
 . /lib/lsb/init-functions
 
-LOGFILE='<%= scope.lookupvar('bsl_bootstrap::init_service_log') %>'
+set +e
+
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
 PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 
 do_start () {
   log_begin_msg "bsl_bootstrap startup provisioning begins via ${PUPPET}"
 
-  <%= scope.lookupvar('bsl_bootstrap::init_service_facter_vars') -%> $PUPPET apply \
-    --show_diff --debug --certname='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' \
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
+    <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
+    --certname='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' \
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$LOGFILE \
-    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }'
+    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
 
   log_end_msg $?
 }
@@ -30,6 +33,7 @@ do_start () {
 case "$1" in
   start)
     do_start
+    exit $?
   ;;
   *)
   echo "Usage: $0 {start}" >&2

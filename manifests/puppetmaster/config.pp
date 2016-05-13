@@ -72,9 +72,11 @@ class bsl_bootstrap::puppetmaster::config(
   $r10k_webhook_pass = 'changeme',
   $r10k_sources = undef,
 
-
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-  $init_service_facter_vars = ""
+  $init_service_facter_vars = '',
+  $init_service_puppet_args = '--show_diff --verbose'
+  $init_service_puppet_log = 'syslog',
+
 ) {
   $target_certname = "${$hostname}.${domain}"
 
