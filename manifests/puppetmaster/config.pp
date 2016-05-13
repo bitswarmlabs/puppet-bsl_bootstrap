@@ -49,12 +49,12 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::config(
-  $manage_hiera = true,
-  $manage_puppetdb = true,
-  $manage_hostname = true,
-  $manage_puppetboard = false,
-  $manage_r10k = true,
-  $r10k_init_deploy_enabled = false,
+  $manage_hiera = 'true',
+  $manage_puppetdb = 'true',
+  $manage_hostname = 'true',
+  $manage_puppetboard = 'false',
+  $manage_r10k = 'true',
+  $r10k_init_deploy_enabled = 'false',
   $target_certname = 'puppet.local',
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
   $environment = "${::environment}",
