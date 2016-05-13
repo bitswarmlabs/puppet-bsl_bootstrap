@@ -74,7 +74,7 @@ class bsl_bootstrap::puppetmaster::config(
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
   $init_service_facter_vars = '',
-  $init_service_puppet_args = '--show_diff --verbose'
+  $init_service_puppet_args = '--show_diff --verbose',
   $init_service_puppet_log = 'syslog',
 
 ) {
