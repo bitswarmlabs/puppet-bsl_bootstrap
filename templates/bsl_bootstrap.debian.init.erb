@@ -25,7 +25,7 @@ do_start () {
     --certname='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>' \
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$LOGFILE \
-    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
+    /etc/puppetlabs/code/environments/<%= @environment %>/manifests/site.pp
 
   log_end_msg $?
 }
