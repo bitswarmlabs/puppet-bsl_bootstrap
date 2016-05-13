@@ -40,5 +40,6 @@ class bsl_bootstrap(
     ensure   => $ensure,
     provider => git,
     source   => $bsl_bootstrap_scm_clone_url,
+    revision => 'master',
   }
 }

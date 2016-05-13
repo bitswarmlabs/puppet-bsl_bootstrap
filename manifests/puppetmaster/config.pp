@@ -52,17 +52,28 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_hiera = 'true',
   $manage_puppetdb = 'true',
   $manage_hostname = 'true',
-  $manage_puppetboard = 'false',
+  $manage_puppetboard = 'true',
   $manage_r10k = 'true',
+
+  $environment = "${::environment}",
+  $hostname = 'puppet',
+  $domain = 'local',
+
+  $hiera_config_path = '/etc/puppetlabs/code/hiera.yaml',
+  $hiera_datadir = '/etc/puppetlabs/code',
+
+  $puppetdb_postgresql_host = 'localhost',
+  $puppetdb_postgresql_user = 'puppetdb',
+  $puppetdb_postgresql_pass = 'puppetdb',
+
   $r10k_init_deploy_enabled = 'false',
   $r10k_manage_webhooks = 'true',
   $r10k_webhook_user = 'puppet',
   $r10k_webhook_pass = 'changeme',
   $r10k_sources = undef,
-  $hostname = 'puppet',
-  $domain = 'local',
+
+
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-  $environment = "${::environment}",
   $init_service_facter_vars = ""
 ) {
   $target_certname = "${$hostname}.${domain}"
