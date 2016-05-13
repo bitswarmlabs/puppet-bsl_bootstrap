@@ -26,6 +26,8 @@ class bsl_bootstrap::puppetmaster::setup {
 
   include 'bsl_bootstrap::puppetmaster::config'
 
+  include 'bsl_puppet::server'
+
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_hostname) {
     class { 'bsl_puppet::server::hostname':
       hostname => $bsl_bootstrap::puppetmaster::config::hostname,
