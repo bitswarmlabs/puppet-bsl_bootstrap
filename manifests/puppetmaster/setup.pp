@@ -24,9 +24,8 @@
 class bsl_bootstrap::puppetmaster::setup {
   hiera_include('classes')
 
-  include 'bsl_bootstrap::puppetmaster::config'
-
   include 'bsl_puppet::server'
+  include 'bsl_bootstrap::puppetmaster::config'
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_hostname) {
     class { 'bsl_puppet::server::hostname':
