@@ -32,6 +32,7 @@ class bsl_bootstrap::puppetmaster::setup {
       hostname => $bsl_bootstrap::puppetmaster::config::hostname,
       domain   => $bsl_bootstrap::puppetmaster::config::domain,
     }
+    ->Class['bsl_puppet::server']
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetdb) {
