@@ -55,11 +55,18 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_puppetboard = 'false',
   $manage_r10k = 'true',
   $r10k_init_deploy_enabled = 'false',
-  $target_certname = 'puppet.local',
+  $r10k_manage_webhooks = 'true',
+  $r10k_webhook_user = 'puppet',
+  $r10k_webhook_pass = 'changeme',
+  $r10k_sources = undef,
+  $hostname = 'puppet',
+  $domain = 'local',
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
   $environment = "${::environment}",
   $init_service_facter_vars = ""
 ) {
+  $target_certname = "${$hostname}.${domain}"
+
   file { '/etc/facter/facts.d/bitswarmlabs.yaml':
     ensure => file,
     content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")

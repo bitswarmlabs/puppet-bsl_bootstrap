@@ -23,23 +23,34 @@
 #
 class bsl_bootstrap::puppetmaster::setup {
   hiera_include('classes')
+
   include 'bsl_bootstrap::puppetmaster::config'
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_hostname) {
-    include 'bsl_puppet::server::hostname'
-    Class['bsl_puppet::server::hostname']->Class['bsl_puppet::server']
+    class { 'bsl_puppet::server::hostname':
+    hostname => $bsl_bootstrap::puppetmaster::config::hostname,
+    domain => $bsl_bootstrap::puppetmaster::config::domain,,
+    }
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetdb) {
-    include 'bsl_puppet::server::puppetdb'
+    class { 'bsl_puppet::server::puppetdb':
+    }
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_hiera) {
-    include 'bsl_puppet::server::hiera'
+    class { 'bsl_puppet::server::hiera':
+    }
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_r10k) {
-    include 'bsl_puppet::server::r10k'
+    class { 'bsl_puppet::server::r10k':
+      webhooks_enabled => $bsl_bootstrap::puppetmaster::config::r10k_manage_webhooks,
+      webhook_user     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_user,
+      webhook_pass     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_pass,
+      sources          => $bsl_bootstrap::puppetmaster::config::r10k_souurces,
+    }
+
     if $bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled {
       include 'bsl_puppet::server::r10k::deploy'
     }
