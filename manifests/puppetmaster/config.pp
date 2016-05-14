@@ -1,4 +1,4 @@
-# Class: bsl_bootstrap::install::puppetmaster
+# Class: bsl_bootstrap::puppetmaster::config
 # ===========================
 #
 # Creates a boot script for Puppetmaster nodes which will run a `puppet apply` with certain templated parameters.
