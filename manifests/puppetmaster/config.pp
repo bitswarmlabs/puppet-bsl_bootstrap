@@ -59,8 +59,6 @@ class bsl_bootstrap::puppetmaster::config(
   $hostname = 'puppet',
   $domain = 'local',
 
-  $hiera_datadir = '/etc/puppetlabs/code',
-
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
   $puppetdb_postgresql_pass = 'puppetdb',
