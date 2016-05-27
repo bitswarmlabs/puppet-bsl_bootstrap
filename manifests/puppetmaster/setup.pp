@@ -55,14 +55,12 @@ class bsl_bootstrap::puppetmaster::setup {
       sources          => $bsl_bootstrap::puppetmaster::config::r10k_sources,
     }
 
-    if $bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled {
-      class { 'bsl_puppet::server::r10k::deploy':
-      }
+    if str2bool($bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled) {
+      class { 'bsl_puppet::server::r10k::deploy': }
     }
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetboard) {
-    class { 'bsl_puppet::server::puppetboard':
-    }
+    class { 'bsl_puppet::server::puppetboard': }
   }
 }
