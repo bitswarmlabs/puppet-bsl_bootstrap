@@ -45,8 +45,7 @@ class bsl_bootstrap::puppetmaster::setup {
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_hiera) {
     class { 'bsl_puppet::server::hiera':
-      hiera_config_path => $bsl_bootstrap::puppetmaster::config::hiera_config_path,
-      datadir           => $bsl_bootstrap::puppetmaster::config::hiera_datadir,
+      datadir => $bsl_bootstrap::puppetmaster::config::hiera_datadir,
     }
   }
 
