@@ -1,4 +1,4 @@
-# Class: bsl_bootstrap::puppetmaster::puppetmaster
+# Class: bsl_bootstrap::puppetmaster::prepare
 # ===========================
 #
 # For use in bootstrapping base images such as Puppetmaster.
@@ -23,6 +23,9 @@
 #
 class bsl_bootstrap::puppetmaster::prepare
 {
+  # Create custom facts for puppetserver to be used in hiera resolution for init script puppet run
   include 'bsl_puppet::server::facter'
+
+  # creates an init script to run `puppet apply` on boot in order to apply run-time configuration
   include 'bsl_bootstrap::puppetmaster::install'
 }
