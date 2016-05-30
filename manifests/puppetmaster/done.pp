@@ -17,10 +17,6 @@ class bsl_bootstrap::puppetmaster::done {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  notify { 'bsl_bootstrap done':
-    message => '#### bsl_bootstrap::puppetmaster::done',
-  }
-
   file { $bsl_bootstrap::init_service:
     ensure  => absent,
   }
