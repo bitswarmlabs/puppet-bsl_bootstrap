@@ -75,7 +75,7 @@ class bsl_bootstrap::puppetmaster::config(
   $init_service_puppet_log = 'syslog',
 
 ) {
-  $target_certname = "${$hostname}.${domain}"
+  $target_certname = "${hostname}.${domain}"
 
   file { '/etc/facter/facts.d/bitswarmlabs.yaml':
     ensure => file,
