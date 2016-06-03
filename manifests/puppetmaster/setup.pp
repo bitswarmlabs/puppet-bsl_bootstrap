@@ -54,6 +54,10 @@ class bsl_bootstrap::puppetmaster::setup {
       webhook_pass     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_pass,
       sources          => $bsl_bootstrap::puppetmaster::config::r10k_sources,
     }
+    ~>
+    class { 'bsl_puppet::server::r10k::envs': }
+    ~>
+    class { 'bsl_puppet::server::r10k::cleanup': }
 
     if str2bool($bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled) {
       class { 'bsl_puppet::server::r10k::deploy': }
