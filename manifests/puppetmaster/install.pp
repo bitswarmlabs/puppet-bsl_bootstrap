@@ -55,12 +55,19 @@ class bsl_bootstrap::puppetmaster::install {
   file { $bsl_bootstrap::init_service:
     ensure  => file,
     mode    => "0755",
-    content => template("bsl_bootstrap/${bsl_bootstrap::init_service_tmpl}.erb")
+    content => template("bsl_bootstrap/${bsl_bootstrap::init_service_tmpl}.erb"),
+    notify  => Exec['bsl_bootstrap_update_rc.d'],
   }
 
   file { $bsl_bootstrap::init_config:
     ensure  => file,
     mode    => "0644",
     content => template("bsl_bootstrap/${bsl_bootstrap::init_config_tmpl}.erb")
+  }
+
+  exec { 'bsl_bootstrap_update_rc.d':
+    command     => 'update-rc.d bsl_bootstrap defaults',
+    path        => '/usr/sbin:/usr/bin:/sbin:/bin',
+    refreshonly => true,
   }
 }
