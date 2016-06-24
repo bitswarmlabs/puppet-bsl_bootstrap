@@ -56,6 +56,7 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_r10k = 'true',
 
   $environment = "${::environment}",
+  $target_certname = "puppet",
   $hostname = 'puppet',
   $domain = 'local',
 
@@ -75,8 +76,6 @@ class bsl_bootstrap::puppetmaster::config(
   $init_service_puppet_log = 'syslog',
 
 ) {
-  $target_certname = "${hostname}.${domain}"
-
   file { '/etc/facter/facts.d/bitswarmlabs.yaml':
     ensure => file,
     content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")
