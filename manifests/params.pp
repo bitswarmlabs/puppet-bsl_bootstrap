@@ -14,10 +14,6 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::params {
-  $bsl_bootstrap_scm_clone_url = 'https://github.com/bitswarmlabs/puppet-bsl_bootstrap.git'
-  $bsl_bootstrap_module_home = "/etc/puppetlabs/code/modules/bsl_bootstrap"
-  $bsl_bootstrap_module_version = 'latest'
-
   $puppet_binary = '/opt/puppetlabs/bin/puppet'
 
   # OS specific paths

@@ -56,9 +56,8 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_r10k = 'true',
 
   $environment = "${::environment}",
-  $target_certname = "puppet",
-  $hostname = 'puppet',
-  $domain = 'local',
+  $hostname = "${::hostname}",
+  $domain = "${::domain}",
 
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
@@ -73,9 +72,11 @@ class bsl_bootstrap::puppetmaster::config(
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
   $init_service_facter_vars = '',
   $init_service_puppet_args = '--show_diff --verbose',
-  $init_service_puppet_log = 'syslog',
+  $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
 ) {
+  $target_certname = "${hostname}.${domain}"
+
   file { '/etc/facter/facts.d/bitswarmlabs.yaml':
     ensure => file,
     content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")
