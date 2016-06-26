@@ -14,14 +14,7 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::done {
-  include 'bsl_bootstrap'
-  include 'bsl_bootstrap::puppetmaster::config'
-
-  file { $bsl_bootstrap::init_service:
-    ensure  => absent,
-  }
-
-  file { $bsl_bootstrap::init_config:
-    ensure  => absent,
+  class { 'bsl_bootstrap::puppetmaster::install':
+    ensure => absent,
   }
 }

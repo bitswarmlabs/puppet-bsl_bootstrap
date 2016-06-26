@@ -20,7 +20,7 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 do_start () {
   log_begin_msg "bsl_bootstrap startup provisioning begins via ${PUPPET}"
 
-  apt-get update -q > /dev/null 2>&1
+  apt-get update -qy
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \

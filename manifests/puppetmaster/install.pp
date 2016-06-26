@@ -48,26 +48,30 @@
 #
 # Copyright 2016 Bitswarm Labs
 #
-class bsl_bootstrap::puppetmaster::install {
+class bsl_bootstrap::puppetmaster::install(
+  $ensure = 'file',
+) {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
   file { $bsl_bootstrap::init_service:
-    ensure  => file,
+    ensure  => $ensure,
     mode    => "0755",
     content => template("bsl_bootstrap/${bsl_bootstrap::init_service_tmpl}.erb"),
     notify  => Exec['bsl_bootstrap_update_rc.d'],
   }
 
   file { $bsl_bootstrap::init_config:
-    ensure  => file,
+    ensure  => $ensure,
     mode    => "0644",
-    content => template("bsl_bootstrap/${bsl_bootstrap::init_config_tmpl}.erb")
+    content => template("bsl_bootstrap/${bsl_bootstrap::init_config_tmpl}.erb"),
+    notify  => Exec['bsl_bootstrap_update_rc.d'],
   }
 
   exec { 'bsl_bootstrap_update_rc.d':
     command     => 'update-rc.d bsl_bootstrap defaults',
     path        => '/usr/sbin:/usr/bin:/sbin:/bin',
+    logoutput   => true,
     refreshonly => true,
   }
 }
