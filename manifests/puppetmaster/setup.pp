@@ -48,6 +48,7 @@ class bsl_bootstrap::puppetmaster::setup {
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_r10k) {
+    Class['bsl_puppet::server']->
     class { 'bsl_puppet::server::r10k':
       webhooks_enabled => $bsl_bootstrap::puppetmaster::config::r10k_manage_webhooks,
       webhook_user     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_user,
@@ -65,6 +66,10 @@ class bsl_bootstrap::puppetmaster::setup {
   }
 
   if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetboard) {
-    class { 'bsl_puppet::server::puppetboard': }
+    class { 'bsl_puppet::server::puppetboard':
+      admin_user => $bsl_bootstrap::puppetmaster::config::puppetboard_user,
+      admin_pass => $bsl_bootstrap::puppetmaster::config::puppetboard_pass,
+      www_hostname => $bsl_bootstrap::puppetmaster::config::external_fqdn,
+    }
   }
 }

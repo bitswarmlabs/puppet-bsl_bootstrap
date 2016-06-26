@@ -58,6 +58,7 @@ class bsl_bootstrap::puppetmaster::config(
   $environment = "${::environment}",
   $hostname = "${::hostname}",
   $domain = "${::domain}",
+  $external_fqdn = "${::fqdn}",
 
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
@@ -74,6 +75,8 @@ class bsl_bootstrap::puppetmaster::config(
   $init_service_puppet_args = '--show_diff --verbose',
   $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
+  $puppetboard_user = 'ops',
+  $puppetboard_pass = 'changemeyoufool',
 ) {
   $target_certname = "${hostname}.${domain}"
 
