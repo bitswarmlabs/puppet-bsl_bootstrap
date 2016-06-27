@@ -20,13 +20,19 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 do_start () {
   log_begin_msg "bsl_bootstrap startup provisioning begins via ${PUPPET}"
 
-  apt-get update -qy
+  apt-get update -qy >> $LOGFILE 2>&1
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$LOGFILE \
     -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }'
+
+  puppet_result=$?
+
+  if [ $puppet_result -eq 0 ]; then
+    r10k deploy environment -pv >> $LOGFILE 2>&1
+  fi
 
   log_end_msg $?
 }
