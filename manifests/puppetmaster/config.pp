@@ -52,11 +52,11 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_hiera = 'true',
   $manage_puppetdb = 'true',
   $manage_hostname = 'true',
-  $manage_puppetboard = 'true',
+  $manage_puppetboard = 'false',
   $manage_r10k = 'true',
 
   $environment = "${::environment}",
-  $hostname = "${::hostname}",
+  $hostname = 'puppet',
   $domain = "${::domain}",
   $external_fqdn = "${::fqdn}",
 
@@ -65,7 +65,7 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetdb_postgresql_pass = 'puppetdb',
 
   $r10k_init_deploy_enabled = 'false',
-  $r10k_manage_webhooks = 'true',
+  $r10k_manage_webhooks = 'false',
   $r10k_webhook_user = 'puppet',
   $r10k_webhook_pass = 'changeme',
   $r10k_sources = undef,
