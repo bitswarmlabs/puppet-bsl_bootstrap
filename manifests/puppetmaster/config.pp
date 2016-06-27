@@ -51,7 +51,7 @@
 class bsl_bootstrap::puppetmaster::config(
   $manage_hiera = 'true',
   $manage_puppetdb = 'true',
-  $manage_hostname = 'false',
+  $manage_hostname = 'true',
   $manage_puppetboard = 'true',
   $manage_r10k = 'true',
 
