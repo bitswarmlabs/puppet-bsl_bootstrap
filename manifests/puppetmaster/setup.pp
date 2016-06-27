@@ -50,7 +50,7 @@ class bsl_bootstrap::puppetmaster::setup {
 
     puppetboard_user         => $bsl_bootstrap::puppetmaster::config::puppetboard_user,
     puppetboard_pass         => $bsl_bootstrap::puppetmaster::config::puppetboard_pass,
-    puppetboard_hostname     => $bsl_bootstrap::puppetmaster::config::external_fqdn,
+    puppetboard_fqdn          => $bsl_bootstrap::puppetmaster::config::external_fqdn,
 
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
