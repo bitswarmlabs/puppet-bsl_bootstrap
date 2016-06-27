@@ -15,6 +15,6 @@
 #
 class bsl_bootstrap::puppetmaster::done {
   service { 'bsl_bootstrap':
-    ensure => absent,
+    ensure => stopped,
   }
 }
