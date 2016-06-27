@@ -79,9 +79,4 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetboard_pass = 'changemeyoufool',
 ) {
   $target_certname = "${hostname}.${domain}"
-
-  file { '/etc/facter/facts.d/bitswarmlabs.yaml':
-    ensure => file,
-    content => template("bsl_bootstrap/bitswarmlabs-facts.yaml.erb")
-  }
 }

@@ -24,52 +24,35 @@
 class bsl_bootstrap::puppetmaster::setup {
   hiera_include('classes')
 
-  include 'bsl_puppet::server'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  if str2bool($bsl_bootstrap::puppetmaster::config::manage_hostname) {
-    class { 'bsl_puppet::server::hostname':
-      hostname => $bsl_bootstrap::puppetmaster::config::hostname,
-      domain   => $bsl_bootstrap::puppetmaster::config::domain,
-    }
-    ->Class['bsl_puppet::server']
-  }
+  class { '::bsl_puppet':
+    server                   => 'true',
+    server_hostname          => $bsl_bootstrap::puppetmaster::config::hostname,
+    server_domain            => $bsl_bootstrap::puppetmaster::config::domain,
 
-  if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetdb) {
-    class { 'bsl_puppet::server::puppetdb':
-      database_host        => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_host,
-      database_username    => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_user,
-      database_password    => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_pass,
-    }
-  }
+    manage_hostname          => $bsl_bootstrap::puppetmaster::config::manage_hostname,
+    manage_puppetdb          => $bsl_bootstrap::puppetmaster::config::manage_puppetdb,
+    manage_hiera             => $bsl_bootstrap::puppetmaster::config::manage_hiera,
+    manage_r10k              => $bsl_bootstrap::puppetmaster::config::manage_r10k,
+    manage_r10k_webhooks     => $bsl_bootstrap::puppetmaster::config::r10k_manage_webhooks,
+    manage_puppetboard       => $bsl_bootstrap::puppetmaster::config::manage_puppetboard,
+    manage_dependencies      => 'true',
 
-  if str2bool($bsl_bootstrap::puppetmaster::config::manage_hiera) {
-    class { 'bsl_puppet::server::hiera': }
-  }
+    puppetdb_database_host   => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_host,
+    puppetdb_database_user   => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_user,
+    puppetdb_database_pass   => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_pass,
 
-  if str2bool($bsl_bootstrap::puppetmaster::config::manage_r10k) {
-    Class['bsl_puppet::server']->
-    class { 'bsl_puppet::server::r10k':
-      webhooks_enabled => $bsl_bootstrap::puppetmaster::config::r10k_manage_webhooks,
-      webhook_user     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_user,
-      webhook_pass     => $bsl_bootstrap::puppetmaster::config::r10k_webhook_pass,
-      sources          => $bsl_bootstrap::puppetmaster::config::r10k_sources,
-    }
-    ~>
-    class { 'bsl_puppet::server::r10k::envs': }
-    ~>
-    class { 'bsl_puppet::server::r10k::cleanup': }
+    r10k_init_deploy_enabled => $bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled,
+    r10k_webhook_user        => $bsl_bootstrap::puppetmaster::config::r10k_webhook_user,
+    r10k_webhook_pass        => $bsl_bootstrap::puppetmaster::config::r10k_webhook_pass,
+    r10k_sources             => $bsl_bootstrap::puppetmaster::config::r10k_sources,
 
-    if str2bool($bsl_bootstrap::puppetmaster::config::r10k_init_deploy_enabled) {
-      class { 'bsl_puppet::server::r10k::deploy': }
-    }
-  }
+    puppetboard_user         => $bsl_bootstrap::puppetmaster::config::puppetboard_user,
+    puppetboard_pass         => $bsl_bootstrap::puppetmaster::config::puppetboard_pass,
+    puppetboard_hostname     => $bsl_bootstrap::puppetmaster::config::external_fqdn,
 
-  if str2bool($bsl_bootstrap::puppetmaster::config::manage_puppetboard) {
-    class { 'bsl_puppet::server::puppetboard':
-      admin_user => $bsl_bootstrap::puppetmaster::config::puppetboard_user,
-      admin_pass => $bsl_bootstrap::puppetmaster::config::puppetboard_pass,
-      www_hostname => $bsl_bootstrap::puppetmaster::config::external_fqdn,
-    }
+    config_via               => 'declare',
+    manage_dependencies_via  => 'declare',
   }
 }
