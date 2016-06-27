@@ -22,9 +22,12 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::setup {
-  hiera_include('classes')
-
   include 'bsl_bootstrap::puppetmaster::config'
+
+  $hello_worlds = hiera('hello_worlds')
+  notify { "## BSL_BOOTSTRAP HELLO FROM":
+    message => join($hello_worlds, "\n  - "),
+  }
 
   class { '::bsl_puppet':
     server                   => 'true',
@@ -55,4 +58,8 @@ class bsl_bootstrap::puppetmaster::setup {
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
   }
+
+  contain '::bsl_puppet'
+
+  Class['::bsl_puppet']~>Service['puppetserver']
 }
