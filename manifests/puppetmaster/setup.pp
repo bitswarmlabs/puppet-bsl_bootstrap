@@ -58,8 +58,4 @@ class bsl_bootstrap::puppetmaster::setup {
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
   }
-
-  contain '::bsl_puppet'
-
-  Class['::bsl_puppet']~>Class['::puppet::server::service']
 }
