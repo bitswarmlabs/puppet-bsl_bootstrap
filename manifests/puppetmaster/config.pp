@@ -64,7 +64,7 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetdb_postgresql_user = 'puppetdb',
   $puppetdb_postgresql_pass = 'puppetdb',
 
-  $r10k_init_deploy_enabled = 'false',
+  $r10k_init_deploy_enabled = 'true',
   $r10k_manage_webhooks = 'false',
   $r10k_webhook_user = 'puppet',
   $r10k_webhook_pass = 'changeme',
