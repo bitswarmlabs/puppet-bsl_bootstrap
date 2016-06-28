@@ -20,6 +20,9 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 do_start () {
   log_begin_msg "bsl_bootstrap startup provisioning begins via ${PUPPET}"
 
+  echo >> $LOGFILE
+  echo "## BSL_BOOTSTRAP STARTUP PROVISIONING BEGINS via ${PUPPET} @ $(date)" >> $LOGFILE
+
   apt-get update -qy >> $LOGFILE 2>&1
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
@@ -33,6 +36,8 @@ do_start () {
   if [ $puppet_result -eq 0 ]; then
     r10k deploy environment -pv >> $LOGFILE 2>&1
   fi
+
+  echo "## ALL DONE @ $(date)" >> $LOGFILE 2>&1
 
   log_end_msg $?
 }
