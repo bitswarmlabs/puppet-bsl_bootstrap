@@ -37,7 +37,7 @@ do_start () {
     r10k deploy environment -pv >> $LOGFILE 2>&1
   fi
 
-  echo "## ALL DONE @ $(date)" >> $LOGFILE 2>&1
+  echo "## ALL DONE ($puppet_result/$?) @ $(date)" >> $LOGFILE 2>&1
 
   log_end_msg $?
 }

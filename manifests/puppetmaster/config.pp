@@ -55,7 +55,7 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_puppetboard = 'false',
   $manage_r10k = 'true',
 
-  $environment = "${::environment}",
+  $environment = 'production',
   $hostname = 'puppet',
   $domain = "${::domain}",
   $external_fqdn = "${::fqdn}",
