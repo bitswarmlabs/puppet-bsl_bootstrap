@@ -55,16 +55,16 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_puppetboard = 'false',
   $manage_r10k = 'true',
 
-  $environment = "${::environment}",
-  $hostname = 'puppet',
-  $domain = "${::domain}",
-  $external_fqdn = "${::fqdn}",
+  $environment = 'production',
+  $hostname = hiera('hostname', 'puppet'),
+  $domain = hiera('domain', 'local'),
+  $external_fqdn = hiera('external_fqdn', $::fqdn),
 
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
   $puppetdb_postgresql_pass = 'puppetdb',
 
-  $r10k_init_deploy_enabled = 'false',
+  $r10k_init_deploy_enabled = 'true',
   $r10k_manage_webhooks = 'false',
   $r10k_webhook_user = 'puppet',
   $r10k_webhook_pass = 'changeme',
@@ -78,5 +78,11 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetboard_user = 'ops',
   $puppetboard_pass = 'changemeyoufool',
 ) {
-  $target_certname = "${hostname}.${domain}"
+  if empty($domain) {
+    $target_certname = $hostname
+  }
+  else {
+    $target_certname = "${hostname}.${domain}"
+  }
+
 }
