@@ -2,7 +2,7 @@
 
 ### BEGIN INIT INFO
 # Provides:          bsl_bootstrap
-# Required-Start:    
+# Required-Start:
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:
@@ -32,6 +32,8 @@ do_start () {
 
   echo "## ALL DONE ($?) @ $(date)" >> $LOGFILE 2>&1
   echo >> $LOGFILE
+
+  chown -R puppet:puppet /opt/puppetlabs/puppet/cache
 
   log_end_msg $?
 }
