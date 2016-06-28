@@ -61,5 +61,5 @@ class bsl_bootstrap::puppetmaster::setup {
 
   contain '::bsl_puppet'
 
-  Class['::bsl_puppet']~>Service['puppetserver']
+  Class['::bsl_puppet']~>Class['::puppet::server::service']
 }
