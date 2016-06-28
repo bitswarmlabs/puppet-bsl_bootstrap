@@ -55,4 +55,5 @@ class bsl_bootstrap::puppetmaster::setup {
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
   }
+  ~>Service['puppetserver']
 }
