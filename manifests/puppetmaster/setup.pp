@@ -24,6 +24,9 @@
 class bsl_bootstrap::puppetmaster::setup {
   include 'bsl_bootstrap::puppetmaster::config'
 
+  $hello_worlds = hiera('hello_worlds')
+  notify { $hello_worlds: }
+
   class { '::bsl_puppet':
     server                   => 'true',
     server_hostname          => $bsl_bootstrap::puppetmaster::config::hostname,
