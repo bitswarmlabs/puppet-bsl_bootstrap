@@ -78,5 +78,11 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetboard_user = 'ops',
   $puppetboard_pass = 'changemeyoufool',
 ) {
-  $target_certname = "${hostname}.${domain}"
+  if empty($domain) {
+    $target_certname = $hostname
+  }
+  else {
+    $target_certname = "${hostname}.${domain}"
+  }
+
 }

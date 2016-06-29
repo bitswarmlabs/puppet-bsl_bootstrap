@@ -33,6 +33,7 @@ class bsl_bootstrap::puppetmaster::setup {
     server                   => 'true',
     server_hostname          => $bsl_bootstrap::puppetmaster::config::hostname,
     server_domain            => $bsl_bootstrap::puppetmaster::config::domain,
+    server_certname          => $bsl_bootstrap::puppetmaster::config::target_certname,
 
     manage_hostname          => $bsl_bootstrap::puppetmaster::config::manage_hostname,
     manage_puppetdb          => $bsl_bootstrap::puppetmaster::config::manage_puppetdb,

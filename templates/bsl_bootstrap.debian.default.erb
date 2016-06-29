@@ -4,3 +4,4 @@
 
 LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
 PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
