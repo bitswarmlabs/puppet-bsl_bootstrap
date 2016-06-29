@@ -56,9 +56,9 @@ class bsl_bootstrap::puppetmaster::config(
   $manage_r10k = 'true',
 
   $environment = 'production',
-  $hostname = 'puppet',
-  $domain = "${::domain}",
-  $external_fqdn = "${::fqdn}",
+  $hostname = hiera('hostname', 'puppet'),
+  $domain = hiera('domain', $::domain),
+  $external_fqdn = hiera('external_fqdn', $::fqdn),
 
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
