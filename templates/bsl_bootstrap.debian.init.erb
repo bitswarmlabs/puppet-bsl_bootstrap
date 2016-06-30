@@ -56,6 +56,35 @@ do_start () {
   done
 
   if [ $retval -eq 0 ]; then
+    if [ ! -e $certfile ]; then
+      msg="## GENERATING CA CERTS via '${PUPPET} agent -t --certname=${TARGET_CERTNAME}'"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+
+      $PUPPET agent -t -v --certname=$TARGET_CERTNAME --logdest=$LOGFILE
+      agent_retval=$?
+
+      msg="## CERT SIGN for '${TARGET_CERTNAME}' via '${PUPPET} cert_sign --allow-dns-alt-names'"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+
+      $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME --logdest=$LOGFILE
+      cert_retval=$?
+
+      if [ $agent_retval -eq 0 ] && [ $cert_retval -eq 0 ]; then
+        msg="## NO ERRORS GENERATING SSL CA CERTS @ $(date)"
+      else
+        msg="## PROBLEM GENERATING SSL CA CERTS (${agent_retval}/${cert_retval}) @ $(date)"
+      fi
+
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    else
+      msg="## CA CERT $certfile already exists"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    fi
+
     msg="## PROVISIONING SUCCESSFUL @ $(date)"
   else
     msg="## PUPPET RUN FAILED (${retval}) @ $(date)"
@@ -63,37 +92,7 @@ do_start () {
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   [ "$VERBOSE" != no ] && log_daemon_msg $msg
 
-  if [ ! -e $certfile ]; then
-    msg="## GENERATING CA CERTS via '${PUPPET} agent -t --certname=${TARGET_CERTNAME}'"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-
-    $PUPPET agent -t -v --certname=$TARGET_CERTNAME --logdest=$LOGFILE
-    agent_retval=$?
-
-    msg="## CERT SIGN for '${TARGET_CERTNAME}' via '${PUPPET} cert_sign --allow-dns-alt-names'"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-
-    $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME --logdest=$LOGFILE
-    cert_retval=$?
-
-    if [ $agent_retval -eq 0 ] && [ $cert_retval -eq 0 ]; then
-      msg="## NO ERRORS GENERATING SSL CA CERTS @ $(date)"
-    else
-      msg="## PROBLEM GENERATING SSL CA CERTS (${agent_retval}/${cert_retval}) @ $(date)"
-    fi
-
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-  else
-    msg="## CA CERT $certfile already exists"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-  fi
-
-
-log_end_msg $retval
+  log_end_msg $retval
 }
 
 case "$1" in
