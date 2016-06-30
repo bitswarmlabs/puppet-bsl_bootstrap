@@ -27,6 +27,8 @@ TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::targe
 do_start () {
   msg="## BSL_BOOTSTRAP STARTUP PROVISIONING BEGINS via ${PUPPET} @ $(date)"
 
+  [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && touch $LOGFILE && chown puppet:puppet $LOGFILE
+
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   log_begin_msg $msg
 
