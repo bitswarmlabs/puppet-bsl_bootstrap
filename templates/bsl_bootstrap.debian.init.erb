@@ -69,10 +69,10 @@ do_start () {
     ln -sf $(readlink -f "$f") /usr/bin/$(basename "$f")
   done
 
-  if [ $retval -eq 0 ] && [ $agent_retval -eq 0 ]; then
+  if [ $retval -eq 0 ]; then
     msg="## BSL_BOOTSTRAP PUPPET RUN ALL DONE (success) @ $(date)"
   else
-    msg="## BSL_BOOTSTRAP PUPPET RUN FAILED (${retval}/${agent_retval}) @ $(date)"
+    msg="## BSL_BOOTSTRAP PUPPET RUN FAILED (${retval}) @ $(date)"
   fi
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   [ "$VERBOSE" != no ] && log_daemon_msg $msg
