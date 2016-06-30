@@ -76,8 +76,8 @@ class bsl_bootstrap::puppetmaster::config(
   $r10k_sources = undef,
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-  $init_service_facter_vars = "FACTER_bootstrapping=true",
-  $init_service_puppet_args = '--show_diff --verbose --detailed_exit_codes',
+  $init_service_facter_vars = "FACTER_bootstrapping='true' FACTER_app_project='${::app_project}'",
+  $init_service_puppet_args = '--show_diff --verbose --detailed-exitcodes',
   $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
   $puppetboard_user = hiera('default_admin_acct_name', 'admin'),

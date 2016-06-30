@@ -13,4 +13,4 @@ default_admin_acct_pass: '<%= @default_admin_acct_pass %>'
 github_api_token: '<%= @github_api_token %>'
 
 <%- end -%>
-<%= { 'bsl_bootstrap::puppetmaster::config::r10k_sources' => @r10k_sources }.to_yaml.gsub("---\n", '') %>
+<%= @r10k_sources_yaml %>

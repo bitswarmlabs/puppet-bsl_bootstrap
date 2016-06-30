@@ -2,7 +2,7 @@
 
 ### BEGIN INIT INFO
 # Provides:          bsl_bootstrap
-# Required-Start:    $all cloud-final
+# Required-Start:    $all
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:
@@ -32,35 +32,15 @@ do_start () {
   apt-get update -qy
 
   ssl_dir=$(puppet config print ssldir)
-
   certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
 
-  if [ ! -f $certfile ]; then
-    msg="## BSL_BOOTSTRAP RUNNING Setting hostname alias for ${TARGET_CERTNAME}"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-    $PUPPET apply --logdest=$LOGFILE -e \
-    "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }"
+  $PUPPET resource user puppet home='/etc/puppetlabs/code'
 
-    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} agent -t --certname=${TARGET_CERTNAME}'"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-    $PUPPET agent -t -v --certname=$TARGET_CERTNAME --logdest=$LOGFILE
-    agent_retval=$?
+  msg="## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}"
+  [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+  [ "$VERBOSE" != no ] && log_daemon_msg $msg
 
-    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} cert_sign --allow-dns-alt-names ${TARGET_CERTNAME}'"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-    $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME --logdest=$LOGFILE
-    cert_retval=$?
-  else
-    agent_retval=0
-    cert_retval=0
-
-    msg="## BSL_BOOTSTRAP Skipped running '${PUPPET} agent -t' to regenerate certs- $certfile exists"
-    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
-    [ "$VERBOSE" != no ] && log_daemon_msg $msg
-  fi
+  $PUPPET apply --logdest=$LOGFILE -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }"
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
@@ -76,9 +56,38 @@ do_start () {
   done
 
   if [ $retval -eq 0 ]; then
-    msg="## BSL_BOOTSTRAP PUPPET RUN ALL DONE (success) @ $(date)"
+    if [ ! -e $certfile ]; then
+      msg="## GENERATING CA CERTS via '${PUPPET} agent -t --certname=${TARGET_CERTNAME}'"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+
+      $PUPPET agent -t -v --certname=$TARGET_CERTNAME --logdest=$LOGFILE
+      agent_retval=$?
+
+      msg="## CERT SIGN for '${TARGET_CERTNAME}' via '${PUPPET} cert_sign --allow-dns-alt-names'"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+
+      $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME --logdest=$LOGFILE
+      cert_retval=$?
+
+      if [ $agent_retval -eq 0 ] && [ $cert_retval -eq 0 ]; then
+        msg="## NO ERRORS GENERATING SSL CA CERTS @ $(date)"
+      else
+        msg="## PROBLEM GENERATING SSL CA CERTS (${agent_retval}/${cert_retval}) @ $(date)"
+      fi
+
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    else
+      msg="## CA CERT $certfile already exists"
+      [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+      [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    fi
+
+    msg="## PROVISIONING SUCCESSFUL @ $(date)"
   else
-    msg="## BSL_BOOTSTRAP PUPPET RUN FAILED (${retval}) @ $(date)"
+    msg="## PUPPET RUN FAILED (${retval}) @ $(date)"
   fi
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   [ "$VERBOSE" != no ] && log_daemon_msg $msg
