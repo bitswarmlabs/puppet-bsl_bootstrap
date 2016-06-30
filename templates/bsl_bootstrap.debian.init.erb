@@ -25,10 +25,7 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
 
 do_start () {
-  msg="## BSL_BOOTSTRAP STARTUP PROVISIONING BEGINS via ${PUPPET} @ $(date)"
-
-  [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && touch $LOGFILE && chown puppet:puppet $LOGFILE
-
+  msg="## BSL_BOOTSTRAP STARTUP PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}"
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   log_begin_msg $msg
 
@@ -43,10 +40,10 @@ do_start () {
     [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
     [ "$VERBOSE" != no ] && log_daemon_msg $msg
 
-    $PUPPET agent -t --logdest=$LOGFILE --certname=$TARGET_CERTNAME
+    $PUPPET agent -t -v --certname=$TARGET_CERTNAME >> $LOGFILE
     agent_retval=$?
 
-    $PUPPET cert sign --logdest=$LOGFILE --allow-dns-alt-names $TARGET_CERTNAME
+    $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME >> $LOGILE
     cert_retval=$?
   else
     agent_retval=0
