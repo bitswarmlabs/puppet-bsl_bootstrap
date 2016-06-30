@@ -49,12 +49,12 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::install(
-  $enabled = true,
+  $enable = true,
 ) {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  $svc_ensure = $enabled ? {
+  $svc_ensure = $enable ? {
     true  => 'running',
     false => 'stopped',
   }
@@ -95,11 +95,11 @@ class bsl_bootstrap::puppetmaster::install(
 
   service { $bsl_bootstrap::puppetmaster::config::init_early_svc:
     ensure  => $svc_ensure,
-    enabled => $enabled,
+    enable  => $enable,
   }
 
   service { $bsl_bootstrap::puppetmaster::config::init_final_svc:
     ensure  => $svc_ensure,
-    enabled => $enabled,
+    enable  => $enable,
   }
 }

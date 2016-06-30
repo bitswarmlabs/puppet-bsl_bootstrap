@@ -15,6 +15,6 @@
 #
 class bsl_bootstrap::puppetmaster::done {
   class { 'bsl_bootstrap::puppetmaster::install':
-    enabled => false,
+    enable => false,
   }
 }
