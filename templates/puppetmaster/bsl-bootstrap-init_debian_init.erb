@@ -40,10 +40,10 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "## success!\n" >> $LOGFILE
+    echo "## success!\\n" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)\n"
-    echo "## failed ($retval)\n" >> $LOGFILE
+    log_failure_msg "failed ($retval)\\n"
+    echo "## failed ($retval)\\n" >> $LOGFILE
   fi
 
   log_progress_msg "Creating user for Puppet"
