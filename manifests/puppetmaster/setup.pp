@@ -56,12 +56,7 @@ class bsl_bootstrap::puppetmaster::setup {
   }
 
   if str2bool($::bootstrapping) {
-    notify { '## bsl_bootstrap bootstrapping facter var present': }
-    Class['::bsl_puppet']
-      -> class{'bsl_bootstrap::puppetmaster::done': }
-        ~> reboot{ 'bsl_bootstrapped': apply  => finished, }
-  }
-  else {
-    notify { "## bsl_bootstrap bootstrapping facter var not present or false: ${::bootstrapping}": }
+    include 'bsl_bootstrap::puppetmaster::done'
+    Class['::bsl_puppet']~>reboot{ 'bsl_bootstrapped': apply  => finished, }
   }
 }
