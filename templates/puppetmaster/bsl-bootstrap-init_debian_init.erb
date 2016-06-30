@@ -10,6 +10,8 @@
 # Description:       Early startup init for bsl_bootstrap Puppetmaster provisioning
 ### END INIT INFO
 
+set -o pipefail
+
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
 
@@ -33,7 +35,7 @@ do_start () {
   log_progress_msg "Executing apt-get update"
   echo "## executing apt-get update" >> $LOGFILE
   apt-get update -qy 2>&1 | tee -a $LOGFILE
-  retval=$PIPESTATUS[0]
+  retval=$?
   final_result+=$retval
 
   if [ $retval -eq 0 ]; then
@@ -50,7 +52,7 @@ do_start () {
     resource --verbose --show_diff \
     user puppet ensure=present home='/etc/puppetlabs/code' \
     2>&1 | tee -a $LOGFILE
-  retval=$PIPESTATUS[0]
+  retval=$?
   final_result+=$retval
 
   if [ $retval -eq 0 ]; then
@@ -67,7 +69,7 @@ do_start () {
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
     2>&1 | tee -a $LOGFILE
-  retval=$PIPESTATUS[0]
+  retval=$?
   final_result+=$retval
 
   if [ $retval -eq 0 ]; then
@@ -83,7 +85,6 @@ do_start () {
 
 case "$1" in
   start)
-    [ "$VERBOSE" != no ] && log_progress_msg "Starting $DESC" "$NAME"
     do_start
     case "$?" in
       0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
