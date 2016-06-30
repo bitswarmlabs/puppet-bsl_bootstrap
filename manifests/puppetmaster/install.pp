@@ -60,7 +60,7 @@ class bsl_bootstrap::puppetmaster::install(
   }
 
   file { $bsl_bootstrap::puppetmaster::config::init_early_service:
-    ensure  => $ensure,
+    ensure  => file,
     mode    => "0755",
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_service_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
@@ -69,7 +69,7 @@ class bsl_bootstrap::puppetmaster::install(
   }
 
   file { $bsl_bootstrap::puppetmaster::config::init_early_config:
-    ensure  => $ensure,
+    ensure  => file,
     mode    => "0644",
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_config_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
@@ -77,16 +77,15 @@ class bsl_bootstrap::puppetmaster::install(
   }
 
   file { $bsl_bootstrap::puppetmaster::config::init_final_service:
-    ensure  => $ensure,
+    ensure  => file,
     mode    => "0755",
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_service_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
     before  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
-
   }
 
   file { $bsl_bootstrap::puppetmaster::config::init_final_config:
-    ensure  => $ensure,
+    ensure  => file,
     mode    => "0644",
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_config_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
