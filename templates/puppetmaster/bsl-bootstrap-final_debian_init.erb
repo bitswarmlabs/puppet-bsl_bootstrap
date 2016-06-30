@@ -23,16 +23,14 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
 
 do_start () {
-  echo "## BSL_BOOTSTRAP FINAL PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" \
-    | tee -a $LOGFILE \
-    | log_begin_msg
+  log_begin_msg "## BSL_BOOTSTRAP FINAL PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
   ssl_dir=$(puppet config print ssldir)
   certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
   certname=$(puppet config print certname --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>')
 
-  echo "## ssl_dir: $ssl_dir" | tee -a $LOGFILE | log_daemon_msg
-  echo "## certname: $certname" | tee -a $LOGFILE | log_daemon_msg
+  log_daemon_msg "## ssl_dir: $ssl_dir" >> $LOGFILE
+  log_daemon_msg "## certname: $certname" >> $LOGFILE
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
@@ -41,25 +39,23 @@ do_start () {
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$PUPPET_LOGDEST \
     -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
-    2>&1 | tee -a $LOGFILE
+    >> $LOGFILE 2>&1
   retval=$?
 
   new_certname=$(puppet config print certname --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>')
-  echo "## new certname: $new_certname" | tee -a $LOGFILE | log_daemon_msg
+  log_daemon_msg "## new certname: $new_certname" >> $LOGFILE
 
   for f in $(find /opt/puppetlabs/bin -type l -or -type f); do
     $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f")) >> $LOGFILE 2>&1
   done
 
-  if [ $retval -eq 0 ]; then
-    echo "## PROVISIONING SUCCESSFUL @ $(date)" | tee -a $LOGFILE | log_daemon_msg
+  if [ $retval -neq 1 ]; then
+    log_daemon_msg "## PROVISIONING SUCCESSFUL @ $(date)" >> $LOGFILE
+    log_end_msg 0
   else
-    echo "## PROVISIONING FAILED (${retval})" | tee -a $LOGFILE | log_daemon_msg
+    log_daemon_msg "## PROVISIONING FAILED (${retval}) @ $(date)" >> $LOGFILE
+    log_end_msg $retval
   fi
-
-  echo "## BSL_BOOTSTRAP INIT COMPLETE RESULT (${retval}) @ $(date)"  | tee -a $LOGFILE | log_daemon_msg
-
-  log_end_msg $retval
 }
 
 case "$1" in
