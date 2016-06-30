@@ -25,26 +25,25 @@ TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::targe
 
 do_start () {
   echo "## BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" \
-    | tee -a $LOGFILE \
-    | log_begin_msg
+    | tee -a $LOGFILE - | log_begin_msg
 
-  apt-get update -qy | tee -a $LOGFILE
+  apt-get update -qy | tee -a $LOGFILE -
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
     resource --verbose --show_diff \
     user puppet ensure=present home='/etc/puppetlabs/code' \
-    2>&1 | tee -a $LOGFILE
+    2>&1 | tee -a $LOGFILE -
 
-  echo "## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}" | tee -a $LOGFILE | log_daemon_msg
+  echo "## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}" | tee -a $LOGFILE - | log_daemon_msg
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
-    2>&1 | tee -a $LOGFILE
+    2>&1 | tee -a $LOGFILE -
 
   retval=$?
 
-  echo "## BSL_BOOTSTRAP INIT COMPLETE RESULT ($retval) @ $(date)" | tee -a $LOGFILE | log_daemon_msg
+  echo "## BSL_BOOTSTRAP INIT COMPLETE RESULT ($retval) @ $(date)" | tee -a $LOGFILE - | log_daemon_msg
 
   log_end_msg $retval
 }
