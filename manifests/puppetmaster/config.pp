@@ -77,7 +77,7 @@ class bsl_bootstrap::puppetmaster::config(
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
   $init_service_facter_vars = "FACTER_bootstrapping=true",
-  $init_service_puppet_args = '--show_diff --verbose',
+  $init_service_puppet_args = '--show_diff --verbose --detailed_exit_codes',
   $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
   $puppetboard_user = hiera('default_admin_acct_name', 'admin'),
@@ -90,4 +90,8 @@ class bsl_bootstrap::puppetmaster::config(
     $target_certname = "${hostname}.${domain}"
   }
 
+  $hello_world = hiera('hello_world', false)
+  if $hello_world {
+    notify { '## bsl_bootstrap hello_world': message => $hello_world }
+  }
 }
