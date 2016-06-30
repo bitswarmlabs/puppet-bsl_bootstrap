@@ -33,7 +33,7 @@ do_start () {
   echo "# BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
   log_progress_msg "Executing apt-get update"
-  echo "## executing apt-get update" >> $LOGFILE
+  echo "\\n\\n## executing apt-get update\\n" >> $LOGFILE
   apt-get update -qy 2>&1 | tee -a $LOGFILE
   retval=$?
   final_result+=$retval
@@ -47,7 +47,8 @@ do_start () {
   fi
 
   log_progress_msg "Creating user for Puppet"
-  echo "## creating user for puppet" >> $LOGFILE
+  echo "\\n\\n## creating user for puppet\\n" >> $LOGFILE
+
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
     resource --verbose --show_diff \
     user puppet ensure=present home='/etc/puppetlabs/code' \
@@ -57,14 +58,14 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!\n" >> $LOGFILE
+    echo "success!\\n" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)\n"
-    echo "## failed ($retval)\n" >> $LOGFILE
+    log_failure_msg "failed ($retval)\\n"
+    echo "## failed ($retval)\\n" >> $LOGFILE
   fi
 
   log_progress_msg "Setting /etc/hosts alias for ${TARGET_CERTNAME}"
-  echo "## Setting /etc/hosts alias for ${TARGET_CERTNAME}"
+  echo "\\n\\n## Setting /etc/hosts alias for ${TARGET_CERTNAME}"
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
@@ -74,10 +75,16 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!\n" >> $LOGFILE
+    echo "success!\\n" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)\n"
-    echo "## failed ($retval)\n" >> $LOGFILE
+    log_failure_msg "failed ($retval)\\n"
+    echo "## failed ($retval)\\n" >> $LOGFILE
+  fi
+
+  if [ $final_result -gt 0]; then
+    echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})" >> $LOGFILE
+  else
+    echo "# BSL_BOOTSTRAP TOTAL SUCCESS" >> $LOGFILE
   fi
 
   log_end_msg $finalretval
