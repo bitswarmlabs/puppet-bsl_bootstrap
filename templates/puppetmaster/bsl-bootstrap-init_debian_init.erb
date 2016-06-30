@@ -82,9 +82,9 @@ do_start () {
   fi
 
   if [ $final_result -gt 0 ]; then
-    echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})" >> $LOGFILE
+    echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})\\n\\n" >> $LOGFILE
   else
-    echo "# BSL_BOOTSTRAP TOTAL SUCCESS" >> $LOGFILE
+    echo "# BSL_BOOTSTRAP TOTAL SUCCESS\\n\\n" >> $LOGFILE
   fi
 
   log_end_msg $finalretval
