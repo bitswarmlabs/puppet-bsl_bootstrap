@@ -11,5 +11,4 @@ external_fqdn: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::extern
 github_api_token: '<%= @github_api_token %>'
 <%- end -%>
 
-bsl_bootstrap::puppetmaster::config::r10k_sources:
-<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml.gsub("---\n", '').indent(2) %>
+<%= { 'bsl_bootstrap::puppetmaster::config::r10k_sources' => scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources') }.to_yaml.gsub("---\n", '').indent(2) %>
