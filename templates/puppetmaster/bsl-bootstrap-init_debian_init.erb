@@ -39,7 +39,7 @@ do_start () {
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
-    -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', \host_aliases => [$::hostname, $::fqdn] }" \
+    -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
     2>&1 | tee -a $LOGFILE
 
   retval=$?
