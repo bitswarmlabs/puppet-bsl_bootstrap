@@ -36,6 +36,7 @@ class bsl_bootstrap::puppetmaster::setup {
     manage_r10k              => $bsl_bootstrap::puppetmaster::config::manage_r10k,
     manage_r10k_webhooks     => $bsl_bootstrap::puppetmaster::config::r10k_manage_webhooks,
     manage_puppetboard       => $bsl_bootstrap::puppetmaster::config::manage_puppetboard,
+    manage_packages          => 'true',
     manage_dependencies      => 'true',
 
     puppetdb_database_host   => $bsl_bootstrap::puppetmaster::config::puppetdb_postgresql_host,
@@ -56,7 +57,6 @@ class bsl_bootstrap::puppetmaster::setup {
   }
 
   if str2bool($::bootstrapping) {
-    include 'bsl_bootstrap::puppetmaster::done'
-    Class['::bsl_puppet']~>reboot{ 'bsl_bootstrapped': apply  => finished, }
+    Package['puppetserver']~>reboot{ 'bsl_bootstrapped': apply  => finished, }
   }
 }

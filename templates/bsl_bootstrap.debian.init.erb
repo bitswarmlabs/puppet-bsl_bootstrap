@@ -32,8 +32,28 @@ do_start () {
 
   apt-get update -qy
 
-  #ssl_dir=$(puppet config print ssldir)
-  #certname=$(puppet config print certname)
+  ssl_dir=$(puppet config print ssldir)
+
+  certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
+
+  if [ ! -f $certfile ]; then
+    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} agent -t' to regenerate certs"
+    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+    [ "$VERBOSE" != no ] && log_daemon_msg $msg
+
+    $PUPPET agent -t --logdest=$LOGFILE --certname=$TARGET_CERTNAME
+    agent_retval=$?
+
+    $PUPPET cert sign --logdest=$LOGFILE --allow-dns-alt-names $TARGET_CERTNAME
+    cert_retval=$?
+  else
+    agent_retval=0
+    cert_retval=0
+
+    msg="## BSL_BOOTSTRAP Skipped running '${PUPPET} agent -t' to regenerate certs- $certfile exists"
+    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+    [ "$VERBOSE" != no ] && log_daemon_msg $msg
+  fi
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
@@ -44,17 +64,17 @@ do_start () {
     -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }'
   retval=$?
 
-  #new_certname=$(puppet config print certname)
+  for f in $(find /opt/puppetlabs/bin -type l -or -type f); do
+    ln -sf $(readlink -f "$f") /usr/bin/$(basename "$f")
+  done
 
-  if [ $retval -eq 0 ]; then
-    msg="## BSL_BOOTSTRAP PUPPET RUN ALL DONE ($retval) @ $(date)"
+  if [ $retval -eq 0 ] && [ $agent_retval -eq 0 ]; then
+    msg="## BSL_BOOTSTRAP PUPPET RUN ALL DONE (success) @ $(date)"
   else
-    msg="## BSL_BOOTSTRAP PUPPET RUN FAILED ($retval) @ $(date)"
+    msg="## BSL_BOOTSTRAP PUPPET RUN FAILED (${retval}/${agent_retval}) @ $(date)"
   fi
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
   [ "$VERBOSE" != no ] && log_daemon_msg $msg
-
-  chown -R puppet:puppet /opt/puppetlabs/puppet/cache
 
   log_end_msg $retval
 }
