@@ -37,6 +37,7 @@ do_start () {
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
     <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
+    --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
     --certname=$TARGET_CERTNAME \
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$LOGFILE \

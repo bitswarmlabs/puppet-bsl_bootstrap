@@ -28,4 +28,7 @@ class bsl_bootstrap::puppetmaster::prepare
 
   # creates an init script to run `puppet apply` on boot in order to apply run-time configuration
   include 'bsl_bootstrap::puppetmaster::install'
+
+  # uploading hiera config for barebones init run
+  include 'bsl_bootstrap::puppetmaster::bootstrapping'
 }

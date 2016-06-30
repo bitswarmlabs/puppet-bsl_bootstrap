@@ -1,0 +1,15 @@
+puppetmaster: '<%= @puppetmaster_fqdn %>'
+hostname: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::hostname') %>'
+domain: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::domain') %>'
+
+default_admin_acct_name: '<%= @default_admin_acct_name %>'
+default_admin_acct_pass: '<%= @default_admin_acct_pass %>'
+
+external_fqdn: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::external_fqdn') %>'
+
+<%- if @github_api_token -%>
+github_api_token: '<%= @github_api_token %>'
+<%- end -%>
+
+bsl_bootstrap::puppetmaster::config::r10k_sources:
+<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml %>
