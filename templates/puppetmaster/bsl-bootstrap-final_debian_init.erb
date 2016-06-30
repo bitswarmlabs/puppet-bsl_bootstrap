@@ -39,7 +39,7 @@ do_start () {
     --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
     --logdest=$PUPPET_LOGDEST \
     -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
-    >> $LOGFILE 2>&1
+    2>&1 | tee -a $LOGFILE
   retval=$?
 
   new_certname=$(puppet config print certname --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>')
