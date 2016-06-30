@@ -24,8 +24,7 @@ PUPPET_LOGDEST='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_s
 TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
 
 do_start () {
-  echo "## BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" \
-    >> $LOGFILE | log_begin_msg
+  log_begin_msg "## BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
   apt-get update -qy | tee -a $LOGFILE -
 
