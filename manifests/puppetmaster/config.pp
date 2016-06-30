@@ -64,14 +64,14 @@ class bsl_bootstrap::puppetmaster::config(
   $puppetdb_postgresql_user = 'puppetdb',
   $puppetdb_postgresql_pass = 'puppetdb',
 
-  $r10k_init_deploy_enabled = 'true',
+  $r10k_init_deploy_enabled = $::bootstrapping,
   $r10k_manage_webhooks = 'false',
   $r10k_webhook_user = 'puppet',
   $r10k_webhook_pass = 'changeme',
   $r10k_sources = undef,
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-  $init_service_facter_vars = '',
+  $init_service_facter_vars = 'FACTER_bootstrapping=true',
   $init_service_puppet_args = '--show_diff --verbose',
   $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
