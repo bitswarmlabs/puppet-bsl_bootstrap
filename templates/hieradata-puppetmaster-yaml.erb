@@ -1,9 +1,9 @@
-puppetmaster: '<%= @puppetmaster_fqdn %>'
+puppetmaster: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::puppetmaster_fqdn') %>'
 hostname: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::hostname') %>'
 domain: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::domain') %>'
 
-default_admin_acct_name: '<%= @default_admin_acct_name %>'
-default_admin_acct_pass: '<%= @default_admin_acct_pass %>'
+default_admin_acct_name: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::default_admin_acct_name') %>'
+default_admin_acct_pass: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::default_admin_acct_pass') %>'
 
 external_fqdn: '<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::external_fqdn') %>'
 
@@ -12,4 +12,4 @@ github_api_token: '<%= @github_api_token %>'
 <%- end -%>
 
 bsl_bootstrap::puppetmaster::config::r10k_sources:
-<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml.gsub("---\n", '') %>
+<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml.gsub("---\n", '').indent(2) %>
