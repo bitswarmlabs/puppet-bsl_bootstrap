@@ -59,4 +59,8 @@ class bsl_bootstrap::puppetmaster::setup {
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
   }
+
+  if str2bool($::bootstrapping) {
+    Class['::bsl_puppet']->class{'bsl_bootstrap::puppetmaster::done': }->reboot{ 'bsl_bootstrapped': }
+  }
 }
