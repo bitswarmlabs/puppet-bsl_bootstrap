@@ -49,37 +49,57 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::install(
-  $ensure = 'file',
+  $enabled = true,
 ) {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  file { $bsl_bootstrap::init_service:
+  $svc_ensure = $enabled ? {
+    true  => 'running',
+    false => 'stopped',
+  }
+
+  file { $bsl_bootstrap::puppetmaster::config::init_early_service:
     ensure  => $ensure,
     mode    => "0755",
-    content => template("bsl_bootstrap/${bsl_bootstrap::init_service_tmpl}.erb"),
-    notify  => Exec['bsl_bootstrap_update_rc.d'],
+    content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_service_tmpl}.erb"),
+    notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
+    before  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
+
   }
 
-  file { $bsl_bootstrap::init_config:
+  file { $bsl_bootstrap::puppetmaster::config::init_early_config:
     ensure  => $ensure,
     mode    => "0644",
-    content => template("bsl_bootstrap/${bsl_bootstrap::init_config_tmpl}.erb"),
-    notify  => Exec['bsl_bootstrap_update_rc.d'],
+    content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_config_tmpl}.erb"),
+    notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
+    before  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
   }
 
-  # file_line { 'puppetserver should start after':
-  #   path    => '/etc/init.d/puppetserver',
-  #   line    => '# Should-Start: $bsl_bootstrap',
-  #   match   => '^#\ Should\-Start:',
-  #   notify  => Exec['bsl_bootstrap_update_rc.d'],
-  # }
-  #
-  exec { 'bsl_bootstrap_update_rc.d':
-    command     => 'update-rc.d bsl_bootstrap defaults',
-    path        => '/usr/sbin:/usr/bin:/sbin:/bin',
-    logoutput   => true,
-    refreshonly => true,
+  file { $bsl_bootstrap::puppetmaster::config::init_final_service:
+    ensure  => $ensure,
+    mode    => "0755",
+    content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_service_tmpl}.erb"),
+    notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
+    before  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
+
   }
 
+  file { $bsl_bootstrap::puppetmaster::config::init_final_config:
+    ensure  => $ensure,
+    mode    => "0644",
+    content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_config_tmpl}.erb"),
+    notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
+    before  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
+  }
+
+  service { $bsl_bootstrap::puppetmaster::config::init_early_svc:
+    ensure  => $svc_ensure,
+    enabled => $enabled,
+  }
+
+  service { $bsl_bootstrap::puppetmaster::config::init_final_svc:
+    ensure  => $svc_ensure,
+    enabled => $enabled,
+  }
 }

@@ -1,0 +1,65 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          bsl-bootstrap-init
+# Required-Start:    $local_fs $network $syslog
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: bsl_bootstrap early provisioning
+# Description:       Early startup init for bsl_bootstrap Puppetmaster provisioning
+### END INIT INFO
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
+PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+PUPPET_LOGDEST='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_logger') %>'
+TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
+
+do_start () {
+  echo "## BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" \
+    | tee -a $LOGFILE \
+    | log_begin_msg
+
+  apt-get update -qy | tee -a $LOGFILE
+
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
+    resource --verbose --show_diff \
+    user puppet ensure=present home='/etc/puppetlabs/code' \
+    2>&1 | tee -a $LOGFILE
+
+  echo "## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}" | tee -a $LOGFILE | log_daemon_msg
+
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
+    apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
+    -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', \host_aliases => [$::hostname, $::fqdn] }" \
+    2>&1 | tee -a $LOGFILE
+
+  retval=$?
+
+  echo "## BSL_BOOTSTRAP INIT COMPLETE RESULT ($retval) @ $(date)" | tee -a $LOGFILE | log_daemon_msg
+
+  log_end_msg $retval
+}
+
+case "$1" in
+  start)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    do_start
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+    ;;
+  *)
+    echo "Usage: $0 {start}" >&2
+    exit 1
+  ;;
+esac
