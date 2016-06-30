@@ -10,7 +10,7 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
   $external_fqdn = $bsl_bootstrap::puppetmaster::config::external_fqdn
   $github_api_token = $bsl_bootstrap::puppetmaster::config::github_api_token
   $r10k_sources = $bsl_bootstrap::puppetmaster::config::r10k_sources
-  
+
   $code_dir = $bsl_bootstrap::puppetmaster::bootstrapping::code_dir
   file { "${$code_dir}/hiera.yaml":
     ensure  => file,

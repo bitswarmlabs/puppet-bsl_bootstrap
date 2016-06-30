@@ -59,6 +59,6 @@ class bsl_bootstrap::puppetmaster::setup {
   class { 'bsl_bootstrap::puppetmaster::done': }
 
   if str2bool($::bootstrapping) {
-    Package['puppetserver']~>reboot{ 'bsl_bootstrapped': apply  => finished, }
+    Package['puppetserver']~>reboot{ 'bsl_bootstrapped': apply  => finished, require => Class['::bsl_puppet'] }
   }
 }
