@@ -9,7 +9,7 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
 
   file { '/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml':
     ensure  => file,
-    source  => 'puppet:///modules/bsl_bootstrap/bootstrapping-hiera.yaml',
+    source  => 'puppet:///modules/bsl_bootstrap/puppetmaster/bootstrapping-hiera.yaml',
     require => File['/etc/puppetlabs/code/bsl_bootstrap'],
   }
 
