@@ -34,7 +34,7 @@ do_start () {
   ssl_dir=$(puppet config print ssldir)
   certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
 
-  $PUPPET resource user puppet home='<%= scope.lookupvar('::puppet::dir') %>'
+  $PUPPET resource user puppet home='/etc/puppetlabs/code'
 
   msg="## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}"
   [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
