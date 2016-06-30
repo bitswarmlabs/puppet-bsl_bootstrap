@@ -1,0 +1,14 @@
+# Hiera config file used by Packer provisioner.
+---
+:backends:
+  - yaml
+:hierarchy:
+  - "local"
+  - "common"
+  - "%{::provisioner}"
+  - "%{::environment}"
+  - "%{::operatingsystem}"
+  - "%{::app_project}"
+:yaml:
+  :datadir: "/etc/puppetlabs/code/bsl_bootstrap/hieradata"
+:merge_behavior: deeper

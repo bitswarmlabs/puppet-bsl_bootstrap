@@ -68,13 +68,13 @@ class bsl_bootstrap::puppetmaster::install(
     notify  => Exec['bsl_bootstrap_update_rc.d'],
   }
 
-  file_line { 'puppetserver should start after':
-    path    => '/etc/init.d/puppetserver',
-    line    => '# Should-Start: $bsl_bootstrap',
-    match   => '^#\ Should\-Start:',
-    notify  => Exec['bsl_bootstrap_update_rc.d'],
-  }
-
+  # file_line { 'puppetserver should start after':
+  #   path    => '/etc/init.d/puppetserver',
+  #   line    => '# Should-Start: $bsl_bootstrap',
+  #   match   => '^#\ Should\-Start:',
+  #   notify  => Exec['bsl_bootstrap_update_rc.d'],
+  # }
+  #
   exec { 'bsl_bootstrap_update_rc.d':
     command     => 'update-rc.d bsl_bootstrap defaults && update-rc.d puppetserver defaults',
     path        => '/usr/sbin:/usr/bin:/sbin:/bin',
