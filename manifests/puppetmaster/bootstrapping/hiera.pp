@@ -20,7 +20,7 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
 
   file { '/etc/puppetlabs/code/bsl_bootstrap/hieradata/puppetmaster.yaml':
     ensure  => file,
-    content => template('bsl_bootstrap/puppetmaster/hieradata-puppetmaster-yaml.erb'),
+    content => template('bsl_bootstrap/hieradata-puppetmaster-yaml.erb'),
     require => File['/etc/puppetlabs/code/bsl_bootstrap'],
   }
 }
