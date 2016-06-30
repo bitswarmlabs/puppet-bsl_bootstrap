@@ -54,10 +54,8 @@ class bsl_bootstrap::puppetmaster::install(
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
-  $svc_ensure = $enable ? {
-    true  => 'running',
-    false => 'stopped',
-  }
+  # always make these services stopped, they should only start at boot
+  $svc_ensure = 'stopped'
 
   file { $bsl_bootstrap::puppetmaster::config::init_early_service:
     ensure  => file,
