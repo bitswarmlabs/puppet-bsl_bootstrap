@@ -36,16 +36,22 @@ do_start () {
   certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
 
   if [ ! -f $certfile ]; then
-    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} agent -t' to regenerate certs"
+    msg="## BSL_BOOTSTRAP RUNNING Setting hostname alias for ${TARGET_CERTNAME}"
     [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
     [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    $PUPPET apply --logdest=$LOGFILE -e \
+    "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }"
 
-    $PUPPET apply -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" >> $LOGFILE
-
-    $PUPPET agent -t -v --certname=$TARGET_CERTNAME >> $LOGFILE
+    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} agent -t --certname=${TARGET_CERTNAME}'"
+    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+    [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    $PUPPET agent -t -v --certname=$TARGET_CERTNAME --logdest=$LOGFILE
     agent_retval=$?
 
-    $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME >> $LOGILE
+    msg="## BSL_BOOTSTRAP RUNNING '${PUPPET} cert_sign --allow-dns-alt-names ${TARGET_CERTNAME}'"
+    [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
+    [ "$VERBOSE" != no ] && log_daemon_msg $msg
+    $PUPPET cert sign -v --allow-dns-alt-names $TARGET_CERTNAME --logdest=$LOGFILE
     cert_retval=$?
   else
     agent_retval=0
