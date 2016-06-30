@@ -30,10 +30,10 @@ class bsl_bootstrap::puppetmaster::params {
       $init_early_config_tmpl      = 'bsl-bootstrap-init_debian_default'
 
       $init_final_svc              = 'bsl-bootstrap-final'
-      $init_final_service          = '/etc/init.d/bsl-bootstrap-init'
-      $init_final_config           = '/etc/default/bsl-bootstrap-init'
-      $init_final_service_tmpl     = 'bsl-bootstrap-init_debian_init'
-      $init_final_config_tmpl      = 'bsl-bootstrap-init_debian_default'
+      $init_final_service          = '/etc/init.d/bsl-bootstrap-final'
+      $init_final_config           = '/etc/default/bsl-bootstrap-final'
+      $init_final_service_tmpl     = 'bsl-bootstrap-final_debian_init'
+      $init_final_config_tmpl      = 'bsl-bootstrap-final_debian_default'
     }
     # 'Gentoo': {
     #   $init_early_svc              = 'bsl-bootstrap-init'
