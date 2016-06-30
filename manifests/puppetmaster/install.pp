@@ -51,6 +51,7 @@
 class bsl_bootstrap::puppetmaster::install(
   $enable = 'true',
 ) {
+  include '::systemd'
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
@@ -64,8 +65,8 @@ class bsl_bootstrap::puppetmaster::install(
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_service_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
     before  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
-
-  }
+  }~>
+  Exec['systemctl-daemon-reload']
 
   file { $bsl_bootstrap::puppetmaster::config::init_early_config:
     ensure  => file,
@@ -73,7 +74,8 @@ class bsl_bootstrap::puppetmaster::install(
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_early_config_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
     before  => Service[$bsl_bootstrap::puppetmaster::config::init_early_svc],
-  }
+  }~>
+  Exec['systemctl-daemon-reload']
 
   file { $bsl_bootstrap::puppetmaster::config::init_final_service:
     ensure  => file,
@@ -81,7 +83,8 @@ class bsl_bootstrap::puppetmaster::install(
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_service_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
     before  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
-  }
+  }~>
+  Exec['systemctl-daemon-reload']
 
   file { $bsl_bootstrap::puppetmaster::config::init_final_config:
     ensure  => file,
@@ -89,7 +92,8 @@ class bsl_bootstrap::puppetmaster::install(
     content => template("bsl_bootstrap/puppetmaster/${bsl_bootstrap::puppetmaster::config::init_final_config_tmpl}.erb"),
     notify  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
     before  => Service[$bsl_bootstrap::puppetmaster::config::init_final_svc],
-  }
+  }~>
+  Exec['systemctl-daemon-reload']
 
   service { $bsl_bootstrap::puppetmaster::config::init_early_svc:
     ensure  => $svc_ensure,
