@@ -76,13 +76,26 @@ class bsl_bootstrap::puppetmaster::config(
   $r10k_sources = undef,
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
-  $init_service_facter_vars = "FACTER_bootstrapping='true' FACTER_app_project='${::app_project}'",
+  $init_service_facter_vars = "FACTER_bootstrapping=true",
   $init_service_puppet_args = '--show_diff --verbose --detailed-exitcodes',
-  $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
+  $init_service_puppet_log = '/var/log/bsl-bootstrap.log',
+  $init_service_puppet_logger = 'syslog',
+
+  $init_early_svc          = $bsl_bootstrap::puppetmaster::params::init_early_svc,
+  $init_early_service      = $bsl_bootstrap::puppetmaster::params::init_early_service,
+  $init_early_service_tmpl = $bsl_bootstrap::puppetmaster::params::init_early_service_tmpl,
+  $init_early_config       = $bsl_bootstrap::puppetmaster::params::init_early_config,
+  $init_early_config_tmpl  = $bsl_bootstrap::puppetmaster::params::init_early_config_tmpl,
+
+  $init_final_svc          = $bsl_bootstrap::puppetmaster::params::init_final_svc,
+  $init_final_service      = $bsl_bootstrap::puppetmaster::params::init_final_service,
+  $init_final_service_tmpl = $bsl_bootstrap::puppetmaster::params::init_final_service_tmpl,
+  $init_final_config       = $bsl_bootstrap::puppetmaster::params::init_final_config,
+  $init_final_config_tmpl  = $bsl_bootstrap::puppetmaster::params::init_final_config_tmpl,
 
   $puppetboard_user = hiera('default_admin_acct_name', 'admin'),
   $puppetboard_pass = hiera('default_admin_acct_pass', 'admin'),
-) {
+) inherits bsl_bootstrap::puppetmaster::params {
   if empty($domain) {
     $target_certname = $hostname
   }

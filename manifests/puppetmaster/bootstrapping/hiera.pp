@@ -15,7 +15,7 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
 
   file { "${$code_dir}/hiera.yaml":
     ensure  => file,
-    source  => 'puppet:///modules/bsl_bootstrap/puppetmaster/bootstrapping-hiera.yaml',
+    source  => 'puppet:///modules/bsl_bootstrap/puppetmaster/hiera.yaml',
     require => File[$code_dir],
   }
 
@@ -26,7 +26,7 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
 
   file { "${$code_dir}/hieradata/puppetmaster.yaml":
     ensure  => file,
-    content => template('bsl_bootstrap/hieradata-puppetmaster-yaml.erb'),
+    content => template('bsl_bootstrap/puppetmaster/hieradata/puppetmaster-yaml.erb'),
     require => File[$code_dir],
   }
 }

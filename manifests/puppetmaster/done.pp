@@ -14,8 +14,7 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::done {
-  service { 'bsl_bootstrap':
+  class { 'bsl_bootstrap::puppetmaster::install':
     enable => false,
-    ensure => stopped,
   }
 }

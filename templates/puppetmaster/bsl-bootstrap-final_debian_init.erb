@@ -1,0 +1,75 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          bsl-bootstrap-final
+# Required-Start:    $all
+# Required-Stop:
+# Should-Start:      bsl-bootstrap-init
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: bsl_bootstrap final provisioning
+# Description:       Final startup Puppetmaster provisioning using bsl_bootstrap
+### END INIT INFO
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
+PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
+
+do_start () {
+  log_begin_msg "## BSL_BOOTSTRAP FINAL PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" | tee $LOGFILE
+
+  ssl_dir=$(puppet config print ssldir)
+  certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
+  certname=$(puppet config print certname --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>')
+
+  log_daemon_msg "## ssl_dir: $ssl_dir" >> $LOGFILE
+  log_daemon_msg "## certname: $certname" >> $LOGFILE
+
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
+    <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
+    --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
+    --certname=$TARGET_CERTNAME \
+    --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>' \
+    --logdest=$PUPPET_LOGDEST \
+    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
+    2>&1 | tee -a $LOGFILE
+  retval=$?
+
+  new_certname=$(puppet config print certname --environment='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>')
+  log_daemon_msg "## new certname: $new_certname" >> $LOGFILE
+
+  for f in $(find /opt/puppetlabs/bin -type l -or -type f); do
+    $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f")) >> $LOGFILE 2>&1
+  done
+
+  if [ $retval -neq 1 ]; then
+    log_daemon_msg "## PROVISIONING SUCCESSFUL @ $(date)" >> $LOGFILE
+    log_end_msg 0
+  else
+    log_daemon_msg "## PROVISIONING FAILED (${retval}) @ $(date)" >> $LOGFILE
+    log_end_msg $retval
+  fi
+}
+
+case "$1" in
+  start)
+    do_start
+    case "$?" in
+      0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+      2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+    ;;
+  *)
+    echo "Usage: $0 {start}" >&2
+    exit 1
+  ;;
+esac
