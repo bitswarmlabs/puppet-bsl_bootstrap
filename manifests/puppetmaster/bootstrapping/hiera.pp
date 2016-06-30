@@ -2,6 +2,15 @@ class bsl_bootstrap::puppetmaster::bootstrapping::hiera {
   include 'bsl_bootstrap::puppetmaster::bootstrapping'
   include 'bsl_bootstrap::puppetmaster::config'
 
+  $puppetmaster_fqdn = $bsl_bootstrap::puppetmaster::config::puppetmaster_fqdn
+  $hostname = $bsl_bootstrap::puppetmaster::config::hostname
+  $domain = $bsl_bootstrap::puppetmaster::config::domain
+  $default_admin_acct_name = $bsl_bootstrap::puppetmaster::config::default_admin_acct_name
+  $default_admin_acct_pass = $bsl_bootstrap::puppetmaster::config::default_admin_acct_pass
+  $external_fqdn = $bsl_bootstrap::puppetmaster::config::external_fqdn
+  $github_api_token = $bsl_bootstrap::puppetmaster::config::github_api_token
+  $r10k_sources = $bsl_bootstrap::puppetmaster::config::r10k_sources
+  
   $code_dir = $bsl_bootstrap::puppetmaster::bootstrapping::code_dir
   file { "${$code_dir}/hiera.yaml":
     ensure  => file,
