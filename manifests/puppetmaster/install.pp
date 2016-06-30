@@ -49,13 +49,14 @@
 # Copyright 2016 Bitswarm Labs
 #
 class bsl_bootstrap::puppetmaster::install(
-  $enable = true,
+  $enable = 'true',
 ) {
   include 'bsl_bootstrap'
   include 'bsl_bootstrap::puppetmaster::config'
 
   # always make these services stopped, they should only start at boot
   $svc_ensure = 'stopped'
+  $svc_enable = str2bool($enable)
 
   file { $bsl_bootstrap::puppetmaster::config::init_early_service:
     ensure  => file,
@@ -92,11 +93,11 @@ class bsl_bootstrap::puppetmaster::install(
 
   service { $bsl_bootstrap::puppetmaster::config::init_early_svc:
     ensure  => $svc_ensure,
-    enable  => $enable,
+    enable  => $svc_enable,
   }
 
   service { $bsl_bootstrap::puppetmaster::config::init_final_svc:
     ensure  => $svc_ensure,
-    enable  => $enable,
+    enable  => $svc_enable,
   }
 }

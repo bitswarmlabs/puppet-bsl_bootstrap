@@ -31,25 +31,25 @@ do_start () {
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
     resource --verbose --show_diff \
     user puppet ensure=present home='/etc/puppetlabs/code' \
-    2>&1 | tee -a $LOGFILE
+    2>&1 | tee $LOGFILE
 
-  log_daemon_msg "## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}" >> $LOGFILE
+  log_progress_msg "## SETTING HOSTNAME ALIAS FOR ${TARGET_CERTNAME}" | tee $LOGFILE
 
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
-    2>&1 | tee -a $LOGFILE
+    2>&1 | tee $LOGFILE
 
   retval=$?
 
-  log_daemon_msg "## BSL_BOOTSTRAP INIT COMPLETE RESULT ($retval) @ $(date)" >> $LOGFILE
+  log_progress_msg "## BSL_BOOTSTRAP INIT COMPLETE RESULT ($retval) @ $(date)" | tee $LOGFILE
 
   log_end_msg $retval
 }
 
 case "$1" in
   start)
-    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    [ "$VERBOSE" != no ] && log_progress_msg "Starting $DESC" "$NAME"
     do_start
     case "$?" in
       0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
