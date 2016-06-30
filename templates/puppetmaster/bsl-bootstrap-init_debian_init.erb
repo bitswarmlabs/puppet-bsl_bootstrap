@@ -25,7 +25,7 @@ TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::targe
 
 do_start () {
   echo "## BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" \
-    | tee -a $LOGFILE - | log_begin_msg
+    >> $LOGFILE | log_begin_msg
 
   apt-get update -qy | tee -a $LOGFILE -
 
