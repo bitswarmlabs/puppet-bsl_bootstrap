@@ -23,7 +23,7 @@ PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
 
 do_start () {
-  log_begin_msg "## BSL_BOOTSTRAP FINAL PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
+  log_begin_msg "## BSL_BOOTSTRAP FINAL PROVISIONING BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" | tee $LOGFILE
 
   ssl_dir=$(puppet config print ssldir)
   certfile="${ssl_dir}/certs/${TARGET_CERTNAME}.pem"
