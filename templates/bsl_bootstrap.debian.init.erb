@@ -40,6 +40,8 @@ do_start () {
     [ "$LOGFILE" != "syslog" ] && [ "$LOGFILE" != "console" ] && echo $msg >> $LOGFILE
     [ "$VERBOSE" != no ] && log_daemon_msg $msg
 
+    $PUPPET apply -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" >> $LOGFILE
+
     $PUPPET agent -t -v --certname=$TARGET_CERTNAME >> $LOGFILE
     agent_retval=$?
 
