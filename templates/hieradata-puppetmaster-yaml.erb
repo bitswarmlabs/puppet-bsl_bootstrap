@@ -12,4 +12,4 @@ github_api_token: '<%= @github_api_token %>'
 <%- end -%>
 
 bsl_bootstrap::puppetmaster::config::r10k_sources:
-<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml %>
+<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::r10k_sources').to_yaml.gsub("---\n", '') %>

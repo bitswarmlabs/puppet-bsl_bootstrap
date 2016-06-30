@@ -76,7 +76,7 @@ class bsl_bootstrap::puppetmaster::install(
   # }
   #
   exec { 'bsl_bootstrap_update_rc.d':
-    command     => 'update-rc.d bsl_bootstrap defaults && update-rc.d puppetserver defaults',
+    command     => 'update-rc.d bsl_bootstrap defaults',
     path        => '/usr/sbin:/usr/bin:/sbin:/bin',
     logoutput   => true,
     refreshonly => true,

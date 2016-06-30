@@ -59,6 +59,11 @@ class bsl_bootstrap::puppetmaster::config(
   $hostname = hiera('hostname', 'puppet'),
   $domain = hiera('domain', 'local'),
   $external_fqdn = hiera('external_fqdn', $::fqdn),
+  $puppetmaster_fqdn = hiera('puppetmaster', 'puppet'),
+
+  $github_api_token = hiera('github_api_token', false),
+  $default_admin_acct_name = hiera('default_admin_acct_name', 'admin'),
+  $default_admin_acct_pass = hiera('default_admin_acct_pass', 'admin'),
 
   $puppetdb_postgresql_host = 'localhost',
   $puppetdb_postgresql_user = 'puppetdb',
@@ -66,8 +71,8 @@ class bsl_bootstrap::puppetmaster::config(
 
   $r10k_init_deploy_enabled = $::bootstrapping,
   $r10k_manage_webhooks = 'false',
-  $r10k_webhook_user = 'puppet',
-  $r10k_webhook_pass = 'changeme',
+  $r10k_webhook_user = hiera('default_admin_acct_user', 'admin'),
+  $r10k_webhook_pass = hiera('default_admin_acct_pass', 'admin'),
   $r10k_sources = undef,
 
   $bootstrap_classname = 'bsl_bootstrap::puppetmaster::setup',
@@ -75,8 +80,8 @@ class bsl_bootstrap::puppetmaster::config(
   $init_service_puppet_args = '--show_diff --verbose',
   $init_service_puppet_log = '/var/log/bsl_bootstrap.log',
 
-  $puppetboard_user = 'ops',
-  $puppetboard_pass = 'changemeyoufool',
+  $puppetboard_user = hiera('default_admin_acct_name', 'admin'),
+  $puppetboard_pass = hiera('default_admin_acct_pass', 'admin'),
 ) {
   if empty($domain) {
     $target_certname = $hostname
