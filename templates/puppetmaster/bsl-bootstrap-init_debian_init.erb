@@ -57,8 +57,7 @@ do_start () {
   
   set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
-    resource --environment=$PUPPET_ENVIRONMENT \
-      --verbose --show_diff  --logdest=$PUPPET_LOGDEST \
+    resource --verbose --environment=$PUPPET_ENVIRONMENT \
       --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
       user puppet ensure=present home='/etc/puppetlabs/code' \
       2>&1 | tee -a $LOGFILE
