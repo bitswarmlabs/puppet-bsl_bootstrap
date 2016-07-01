@@ -79,7 +79,7 @@ class bsl_bootstrap::puppetmaster::config(
   $init_service_facter_vars = "FACTER_bootstrapping=true",
   $init_service_puppet_args = '--show_diff --verbose --detailed-exitcodes',
   $init_service_puppet_log = '/var/log/bsl-bootstrap.log',
-  $init_service_puppet_logger = 'syslog',
+  $init_service_puppet_logger = 'console',
 
   $init_early_svc          = $bsl_bootstrap::puppetmaster::params::init_early_svc,
   $init_early_service      = $bsl_bootstrap::puppetmaster::params::init_early_service,
