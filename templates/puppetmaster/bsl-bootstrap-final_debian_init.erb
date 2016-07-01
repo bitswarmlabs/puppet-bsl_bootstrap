@@ -47,8 +47,9 @@ do_start () {
 ## Final bootstrap provisioning begins via puppet apply certname=${TARGET_CERTNAME} environment=${PUPPET_ENVIRONMENT}" >> $LOGFILE
 
   set -x
-  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
-    --show_diff --verbose --detailed-exitcodes \
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
+    $PUPPET apply \
+    --test \
     --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
     --certname=$TARGET_CERTNAME \
     --environment=$PUPPET_ENVIRONMENT \
@@ -77,11 +78,38 @@ do_start () {
     echo " - $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f"))" >> $LOGFILE 2>&1
   done
 
-  if [ $final_result -ne 1 ]; then
-    echo "## PROVISIONING SUCCESSFUL @ $(date)
+  log_begin_msg "Attempting puppet agent -t"
+  echo "
+## Attempting puppet agent -t run" >> $LOGFILE
+
+  set -x
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
+    $PUPPET agent \
+    --test 2>&1 | tee -a $LOGFILE
+  retval=$?
+  set +x
+
+  if [ $retval -ne 1 ]; then
+    log_success_msg "success, calling for reboot"
+    echo "## ... success, calling for reboot" >> $LOGFILE
+    shutdown -r 1 2>&1 | tee -a $LOGFILE
+    log_end_msg 0
+  else
+    log_warning_msg "failed (warning)" $retval
+    echo "## puppet agent non-zero return warning ($retval)" >> $LOGFILE
+    log_end_msg $retval
+  fi
+
+  log_begin_msg "Provisioning"
+  if [ $final_result -eq 0 ]; then
+    log_success_msg "successful"
+    log_end_msg 0
+    echo "# BSL_BOOTSTRAP (FINAL) TOTAL SUCCESS @ $(date)
 " >> $LOGFILE
   else
-    echo "## PROVISIONING FAILED (${retval}) @ $(date)
+    log_failure_msg "failed"
+    log_end_msg 1
+    echo "# BSL_BOOTSTRAP (FINAL) FAIL (${final_result}) @ $(date)
 " >> $LOGFILE
   fi
 

@@ -75,7 +75,7 @@ class bsl_bootstrap::puppetmaster::config(
   $r10k_webhook_pass = hiera('default_admin_acct_pass', 'admin'),
   $r10k_sources = undef,
 
-  $init_service_facter_vars = "FACTER_bootstrapping=true",
+  $init_service_facter_vars = '',
   $init_service_puppet_log = '/var/log/bsl-bootstrap.log',
   $init_service_puppet_logger = 'console',
 
