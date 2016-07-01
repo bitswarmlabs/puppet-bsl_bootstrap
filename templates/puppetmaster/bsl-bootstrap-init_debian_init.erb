@@ -33,9 +33,7 @@ do_start () {
   echo "# BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
   log_progress_msg "Executing apt-get update"
-  echo "
-
-## executing apt-get update
+  echo "## executing apt-get update
 " >> $LOGFILE
   apt-get update -qy 2>&1 | tee -a $LOGFILE
   retval=$?
@@ -53,7 +51,6 @@ do_start () {
 
   log_progress_msg "Creating user for Puppet"
   echo "
-
 ## creating user for puppet
 " >> $LOGFILE
 
@@ -99,11 +96,9 @@ do_start () {
 
   if [ $final_result -gt 0 ]; then
     echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})
-
 " >> $LOGFILE
   else
     echo "# BSL_BOOTSTRAP TOTAL SUCCESS
-
 " >> $LOGFILE
   fi
 
