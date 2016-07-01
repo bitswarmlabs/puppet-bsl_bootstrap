@@ -58,15 +58,14 @@ do_start () {
   set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
     resource --environment=$PUPPET_ENVIRONMENT \
-      <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
-      --logdest=$PUPPET_LOGDEST \
+      --verbose --showdiff  --logdest=$PUPPET_LOGDEST \
       --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
       user puppet ensure=present home='/etc/puppetlabs/code' \
       2>&1 | tee -a $LOGFILE
   retval=$?
   set +x
 
-  if [ $retval -eq 0 ] || [ $retval -neq 1 ]; then
+  if [ $retval -eq 0 ]; then
     log_success_msg "success!"
     echo "## ... success!!" >> $LOGFILE
     log_end_msg 0
@@ -74,8 +73,8 @@ do_start () {
     log_failure_msg "failed ($retval)"
     echo "## puppet non-zero return ($retval)" >> $LOGFILE
     final_result+=$retval
-    log_end_msg $retval
   fi
+  log_end_msg $retval
 
   log_begin_msg "Setting /etc/hosts alias for ${TARGET_CERTNAME}"
   echo "
@@ -88,16 +87,15 @@ do_start () {
   retval=$?
   set +x
 
-  if [ $retval -eq 0 ] || [ $retval -neq 1 ]; then
+  if [ $retval -eq 0 ]\; then
     log_success_msg "success!"
     echo "## ... success!!" >> $LOGFILE
-    log_end_msg 0
   else
     log_failure_msg "failed ($retval)"
     echo "## puppet non-zero return ($retval)" >> $LOGFILE
     final_result+=$retval
-    log_end_msg $retval
   fi
+  log_end_msg $retval
 
   if [ $final_result -gt 0 ]; then
     echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})

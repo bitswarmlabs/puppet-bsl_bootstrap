@@ -48,12 +48,12 @@ do_start () {
 
   set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
-    <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_args') %> \
+    --show_diff --verbose --detailed-exitcodes \
     --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
     --certname=$TARGET_CERTNAME \
     --environment=$PUPPET_ENVIRONMENT \
     --logdest=$PUPPET_LOGDEST \
-    -e 'class { '\''<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::bootstrap_classname') %>'\'': }' \
+    -e 'class { '\''bsl_bootstrap::puppetmaster::setup'\'': }' \
     2>&1 | tee -a $LOGFILE
   retval=$?
   set +x
