@@ -2,8 +2,10 @@
 
 ### BEGIN INIT INFO
 # Provides:          bsl-bootstrap-init
-# Required-Start:    $local_fs $network $syslog cloud-init
+# Required-Start:    $local_fs $network $syslog
 # Required-Stop:
+# Should-Start:      cloud-init
+# Should-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:
 # Short-Description: bsl_bootstrap early provisioning
@@ -23,70 +25,76 @@ set -o pipefail
 LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
 PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
 PUPPET_LOGDEST='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_logger') %>'
+PUPPET_ENVIRONMENT='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>'
 TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
 
 do_start () {
   declare -i final_result=0
   declare -i retval=0
 
-  log_begin_msg " BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} target_certname=${TARGET_CERTNAME}"
+  log_begin_msg "BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} target_certname=${TARGET_CERTNAME}" && log_end_msg 0
   echo "# BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
-  log_progress_msg "Executing apt-get update"
+  log_begin_msg "Executing apt-get update"
   echo "
-## executing apt-get update
-" >> $LOGFILE
+## executing apt-get update" >> $LOGFILE
   apt-get update -qy 2>&1 | tee -a $LOGFILE
   retval=$?
   final_result+=$retval
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
+    echo "## ... success!!" >> $LOGFILE
   else
     log_failure_msg "failed ($retval)"
     echo "## apt-get non-zero return ($retval)" >> $LOGFILE
   fi
+  log_end_msg $retval
 
-  log_progress_msg "Creating user for Puppet"
+  log_begin_msg "Creating user for Puppet"
   echo "
-
-## creating user for puppet
-" >> $LOGFILE
-
+## creating user for puppet" >> $LOGFILE
+  
+  set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET \
-    resource --verbose --show_diff \
-    user puppet ensure=present home='/etc/puppetlabs/code' \
-    2>&1 | tee -a $LOGFILE
+    resource --verbose --environment=$PUPPET_ENVIRONMENT \
+      --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
+      user puppet ensure=present home='/etc/puppetlabs/code' \
+      2>&1 | tee -a $LOGFILE
   retval=$?
-  final_result+=$retval
+  set +x
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!" >> $LOGFILE
+    echo "## ... success!!" >> $LOGFILE
+    log_end_msg 0
   else
     log_failure_msg "failed ($retval)"
-    echo "## failed ($retval)" >> $LOGFILE
+    echo "## puppet non-zero return ($retval)" >> $LOGFILE
+    final_result+=$retval
   fi
+  log_end_msg $retval
 
-  log_progress_msg "Setting /etc/hosts alias for ${TARGET_CERTNAME}"
+  log_begin_msg "Setting /etc/hosts alias for ${TARGET_CERTNAME}"
   echo "
-
-## Setting /etc/hosts alias for ${TARGET_CERTNAME}
-" >> $LOGFILE
+## Setting /etc/hosts alias for ${TARGET_CERTNAME}" >> $LOGFILE
+  set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
-    apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
+    apply --logdest=$PUPPET_LOGDEST --environment=$PUPPET_ENVIRONMENT --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
     2>&1 | tee -a $LOGFILE
   retval=$?
-  final_result+=$retval
+  set +x
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!" >> $LOGFILE
+    echo "## ... success!!" >> $LOGFILE
   else
     log_failure_msg "failed ($retval)"
-    echo "## failed ($retval)" >> $LOGFILE
+    echo "## puppet non-zero return ($retval)" >> $LOGFILE
+    final_result+=$retval
   fi
+  log_end_msg $retval
 
   if [ $final_result -gt 0 ]; then
     echo "# BSL_BOOTSTRAP INIT FAIL (${final_result})
@@ -96,7 +104,7 @@ do_start () {
 " >> $LOGFILE
   fi
 
-  log_end_msg $finalretval
+  exit $final_result
 }
 
 case "$1" in
