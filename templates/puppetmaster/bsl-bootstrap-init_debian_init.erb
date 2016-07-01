@@ -33,7 +33,8 @@ do_start () {
   echo "# BSL_BOOTSTRAP STARTUP INIT BEGINS via ${PUPPET} @ $(date) target_certname=${TARGET_CERTNAME}" >> $LOGFILE
 
   log_progress_msg "Executing apt-get update"
-  echo "## executing apt-get update
+  echo "
+## executing apt-get update
 " >> $LOGFILE
   apt-get update -qy 2>&1 | tee -a $LOGFILE
   retval=$?
@@ -43,14 +44,13 @@ do_start () {
     log_success_msg "success!"
     echo "## success!" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)
-"
-    echo "## failed ($retval)
-" >> $LOGFILE
+    log_failure_msg "failed ($retval)"
+    echo "## failed ($retval)" >> $LOGFILE
   fi
 
   log_progress_msg "Creating user for Puppet"
   echo "
+
 ## creating user for puppet
 " >> $LOGFILE
 
@@ -63,19 +63,17 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!
-" >> $LOGFILE
+    echo "success!" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)
-"
-    echo "## failed ($retval)
-" >> $LOGFILE
+    log_failure_msg "failed ($retval)"
+    echo "## failed ($retval)" >> $LOGFILE
   fi
 
   log_progress_msg "Setting /etc/hosts alias for ${TARGET_CERTNAME}"
   echo "
 
-## Setting /etc/hosts alias for ${TARGET_CERTNAME}"
+## Setting /etc/hosts alias for ${TARGET_CERTNAME}
+" >> $LOGFILE
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%>  $PUPPET \
     apply --logdest=$PUPPET_LOGDEST --verbose --show_diff \
     -e "host { '${TARGET_CERTNAME}': ip => '127.0.0.1', host_aliases => [$::hostname, $::fqdn] }" \
@@ -85,13 +83,10 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "success!
-" >> $LOGFILE
+    echo "success!" >> $LOGFILE
   else
-    log_failure_msg "failed ($retval)
-"
-    echo "## failed ($retval)
-" >> $LOGFILE
+    log_failure_msg "failed ($retval)"
+    echo "## failed ($retval)" >> $LOGFILE
   fi
 
   if [ $final_result -gt 0 ]; then
