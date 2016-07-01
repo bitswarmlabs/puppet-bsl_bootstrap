@@ -58,7 +58,7 @@ do_start () {
   retval=$?
   set +x
 
-  if [ $retval -eq 0 ] || [ $retval -neq 1 ]; then
+  if [ $retval -eq 0 ] || [ $retval -ne 1 ]; then
     log_success_msg "success!"
     echo "## ... success!!" >> $LOGFILE
     log_end_msg 0
@@ -72,11 +72,12 @@ do_start () {
   new_certname=$(puppet config print certname --environment=$PUPPET_ENVIRONMENT)
   echo "## new certname: $new_certname" >> $LOGFILE
 
+  echo "## creating symlinks from /opt/puppetlabs/bin to /usr/bin" >> $LOGFILE
   for f in $(find /opt/puppetlabs/bin -type l -or -type f); do
-    echo $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f")) >> $LOGFILE 2>&1
+    echo " - $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f"))" >> $LOGFILE 2>&1
   done
 
-  if [ $retval -neq 1 ]; then
+  if [ $retval -ne 1 ]; then
     echo "## PROVISIONING SUCCESSFUL @ $(date)
 " >> $LOGFILE
   else
