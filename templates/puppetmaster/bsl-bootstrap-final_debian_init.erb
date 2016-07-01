@@ -83,7 +83,7 @@ do_start () {
 
   set -x
   <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET agent \
-    --test --noop 2>&1 | tee -a $LOGFILE
+    --test 2>&1 | tee -a $LOGFILE
   retval=$?
   set +x
 
