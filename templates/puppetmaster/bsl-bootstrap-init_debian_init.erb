@@ -2,7 +2,7 @@
 
 ### BEGIN INIT INFO
 # Provides:          bsl-bootstrap-init
-# Required-Start:    $local_fs $network $syslog
+# Required-Start:    $local_fs $network $syslog cloud-init
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:
@@ -42,10 +42,9 @@ do_start () {
 
   if [ $retval -eq 0 ]; then
     log_success_msg "success!"
-    echo "## success!" >> $LOGFILE
   else
     log_failure_msg "failed ($retval)"
-    echo "## failed ($retval)" >> $LOGFILE
+    echo "## apt-get non-zero return ($retval)" >> $LOGFILE
   fi
 
   log_progress_msg "Creating user for Puppet"
