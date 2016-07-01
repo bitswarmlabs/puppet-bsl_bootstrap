@@ -87,7 +87,7 @@ do_start () {
   retval=$?
   set +x
 
-  if [ $retval -eq 0 ]\; then
+  if [ $retval -eq 0 ]; then
     log_success_msg "success!"
     echo "## ... success!!" >> $LOGFILE
   else
