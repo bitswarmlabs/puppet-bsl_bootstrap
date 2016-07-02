@@ -97,6 +97,19 @@ do_start () {
     log_end_msg $retval
   fi
 
+  set -x
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
+  $PUPPET apply \
+    --show_diff --verbose --detailed-exitcodes \
+    --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
+    --certname=$TARGET_CERTNAME \
+    --environment=$PUPPET_ENVIRONMENT \
+    --logdest=$PUPPET_LOGDEST \
+    -e 'class { '\''bsl_bootstrap::puppetmaster::setup'\'': }' \
+    2>&1 | tee -a $LOGFILE
+  retval=$?
+  set +x
+
   log_begin_msg "Provisioning"
   if [ $final_result -eq 0 ]; then
     log_success_msg "successful"
