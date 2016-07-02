@@ -101,14 +101,18 @@ do_start () {
   if [ $final_result -eq 0 ]; then
     log_success_msg "successful"
     log_end_msg 0
-    echo "## PROVISIONING SUCCESSFUL @ $(date)
+    echo "# BSL_BOOTSTRAP (FINAL) TOTAL SUCCESS @ $(date)
 " >> $LOGFILE
   else
     log_failure_msg "failed"
     log_end_msg 1
-    echo "## PROVISIONING FAILED (${retval}) @ $(date)
+    echo "# BSL_BOOTSTRAP (FINAL) FAIL (${final_result}) @ $(date)
 " >> $LOGFILE
   fi
+
+if [ $final_result -gt 0 ]; then
+else
+fi
 
   exit $final_result
 }
