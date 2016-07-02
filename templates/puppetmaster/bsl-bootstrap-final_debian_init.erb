@@ -105,7 +105,7 @@ do_start () {
     log_end_msg $retval
   fi
 
-  if [ -e /etc/puppetlabs/code/bsl_bootstrap/bsl-bootstrap-final-was-here ];
+  if [ -e /etc/puppetlabs/code/bsl_bootstrap/bsl-bootstrap-final-was-here ]; then
     echo "## already rebooted in past, ignoring now" >> $LOGFILE
   else
     shutdown -r 1 2>&1 | tee -a $LOGFILE
