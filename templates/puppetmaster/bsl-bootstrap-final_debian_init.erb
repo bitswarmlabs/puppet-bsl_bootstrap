@@ -98,12 +98,20 @@ do_start () {
   if [ $retval -ne 1 ]; then
     log_success_msg "success, calling for reboot"
     echo "## ... success, calling for reboot" >> $LOGFILE
-    shutdown -r 1 2>&1 | tee -a $LOGFILE
     log_end_msg 0
   else
-    log_warning_msg "failed (warning)" $retval
-    echo "## puppet agent non-zero return warning ($retval)" >> $LOGFILE
+    log_warning_msg "failed, rebooting to try again" $retval
+    echo "## puppet agent non-zero return warning ($retval), rebooting to try again" >> $LOGFILE
     log_end_msg $retval
+  fi
+
+  if [ -e /etc/puppetlabs/code/bsl_bootstrap/bsl-bootstrap-final-was-here ]; then
+    echo "## already rebooted in past, ignoring now" >> $LOGFILE
+  else
+    shutdown -r 1 2>&1 | tee -a $LOGFILE
+    if [ $? -eq 0 ]; then
+      echo "$(date)" > /etc/puppetlabs/code/bsl_bootstrap/bsl-bootstrap-final-was-here
+    fi
   fi
 
   log_begin_msg "Provisioning"
