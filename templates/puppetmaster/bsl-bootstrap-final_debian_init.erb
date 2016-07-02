@@ -104,7 +104,7 @@ do_start () {
     echo "# BSL_BOOTSTRAP (FINAL) TOTAL SUCCESS @ $(date)
 " >> $LOGFILE
   else
-    log_failure_msg "failed"
+    log_warning_msg "failed"
     log_end_msg 1
     echo "# BSL_BOOTSTRAP (FINAL) FAIL (${final_result}) @ $(date)
 " >> $LOGFILE
