@@ -47,8 +47,9 @@ do_start () {
 ## Final bootstrap provisioning begins via puppet apply certname=${TARGET_CERTNAME} environment=${PUPPET_ENVIRONMENT}" >> $LOGFILE
 
   set -x
-  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET apply \
-    --show_diff --verbose --detailed-exitcodes \
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
+    $PUPPET apply \
+    --test \
     --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
     --certname=$TARGET_CERTNAME \
     --environment=$PUPPET_ENVIRONMENT \
@@ -89,35 +90,9 @@ do_start () {
   set +x
 
   if [ $retval -ne 1 ]; then
-    log_success_msg "success!"
-    echo "## ... success!!" >> $LOGFILE
-    log_end_msg 0
-  else
-    log_warning_msg "failed (warning)" $retval
-    echo "## puppet agent non-zero return warning ($retval)" >> $LOGFILE
-    log_end_msg $retval
-  fi
-
-  log_begin_msg "Running final bootstrap provisioning in order to trigger restart"
-  echo "
-  ## Running final bootstrap provisioning in order to trigger restart" >> $LOGFILE
-
-  set -x
-  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrap_restart=true \
-    $PUPPET apply \
-    --show_diff --verbose --detailed-exitcodes \
-    --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
-    --certname=$TARGET_CERTNAME \
-    --environment=$PUPPET_ENVIRONMENT \
-    --logdest=$PUPPET_LOGDEST \
-    -e 'class { '\''bsl_bootstrap::puppetmaster::setup'\'': }' \
-    2>&1 | tee -a $LOGFILE
-  retval=$?
-  set +x
-
-  if [ $retval -ne 1 ]; then
-    log_success_msg "success!"
-    echo "## ... success!!" >> $LOGFILE
+    log_success_msg "success, calling for reboot"
+    echo "## ... success, calling for reboot" >> $LOGFILE
+    shutdown -r 1 2>&1 | tee -a $LOGFILE
     log_end_msg 0
   else
     log_warning_msg "failed (warning)" $retval

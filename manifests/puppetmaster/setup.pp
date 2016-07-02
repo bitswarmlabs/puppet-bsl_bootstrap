@@ -58,7 +58,7 @@ class bsl_bootstrap::puppetmaster::setup {
   ->
   class { 'bsl_bootstrap::puppetmaster::done': }
 
-  if str2bool($::bootstrapping) {
+  if $::bootstrapping == 'reboot' {
     notify { 'bsl_bootstrap::puppetmaster bootstrapping reboot needed': }
       ~>reboot{ 'bsl_bootstrapped': apply  => finished, require => Class['::bsl_puppet'] }
   }
