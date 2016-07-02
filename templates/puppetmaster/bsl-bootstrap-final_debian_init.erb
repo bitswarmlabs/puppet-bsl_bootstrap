@@ -82,7 +82,8 @@ do_start () {
 ## Attempting puppet agent -t run" >> $LOGFILE
 
   set -x
-  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> $PUPPET agent \
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
+    $PUPPET agent \
     --test 2>&1 | tee -a $LOGFILE
   retval=$?
   set +x
@@ -92,14 +93,18 @@ do_start () {
     echo "## ... success!!" >> $LOGFILE
     log_end_msg 0
   else
-    log_failure_msg "failed (ignoring)" $retval
-    echo "## puppet agent non-zero return ($retval) - ignoring" >> $LOGFILE
+    log_warning_msg "failed (warning)" $retval
+    echo "## puppet agent non-zero return warning ($retval)" >> $LOGFILE
     log_end_msg $retval
   fi
 
+  log_begin_msg "Running final bootstrap provisioning in order to trigger restart"
+  echo "
+  ## Running final bootstrap provisioning in order to trigger restart" >> $LOGFILE
+
   set -x
-  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrapping=true \
-  $PUPPET apply \
+  <%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_facter_vars') -%> FACTER_bootstrap_restart=true \
+    $PUPPET apply \
     --show_diff --verbose --detailed-exitcodes \
     --hiera_config=/etc/puppetlabs/code/bsl_bootstrap/hiera.yaml \
     --certname=$TARGET_CERTNAME \
@@ -110,6 +115,16 @@ do_start () {
   retval=$?
   set +x
 
+  if [ $retval -ne 1 ]; then
+    log_success_msg "success!"
+    echo "## ... success!!" >> $LOGFILE
+    log_end_msg 0
+  else
+    log_warning_msg "failed (warning)" $retval
+    echo "## puppet agent non-zero return warning ($retval)" >> $LOGFILE
+    log_end_msg $retval
+  fi
+
   log_begin_msg "Provisioning"
   if [ $final_result -eq 0 ]; then
     log_success_msg "successful"
@@ -117,15 +132,11 @@ do_start () {
     echo "# BSL_BOOTSTRAP (FINAL) TOTAL SUCCESS @ $(date)
 " >> $LOGFILE
   else
-    log_warning_msg "failed"
+    log_failure_msg "failed"
     log_end_msg 1
     echo "# BSL_BOOTSTRAP (FINAL) FAIL (${final_result}) @ $(date)
 " >> $LOGFILE
   fi
-
-if [ $final_result -gt 0 ]; then
-else
-fi
 
   exit $final_result
 }
