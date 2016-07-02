@@ -78,6 +78,9 @@ do_start () {
     echo " - $(ln -svf $(readlink -f "$f") /usr/bin/$(basename "$f"))" >> $LOGFILE 2>&1
   done
 
+  echo "## Resetting ownership of /opt/puppetlabs/puppet/cache"
+  [ -e /opt/puppetlabs/puppet/cache ] && chown -c -R puppet:puppet /opt/puppetlabs/puppet/cache 2>&1 | tee -a $LOGFILE
+
   log_begin_msg "Attempting puppet agent -t"
   echo "
 ## Attempting puppet agent -t run" >> $LOGFILE
@@ -89,7 +92,8 @@ do_start () {
   retval=$?
   set +x
 
-  [ -e /opt/puppetlabs/puppet/cache ] && chown -R puppet:puppet /opt/puppetlabs/puppet/cache
+  echo "## Resetting ownership of /opt/puppetlabs/puppet/cache #2"
+  [ -e /opt/puppetlabs/puppet/cache ] && chown -c -R puppet:puppet /opt/puppetlabs/puppet/cache 2>&1 | tee -a $LOGFILE
 
   if [ $retval -ne 1 ]; then
     log_success_msg "success, calling for reboot"
