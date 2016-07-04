@@ -13,4 +13,4 @@ default_admin_acct_pass: '<%= @default_admin_acct_pass %>'
 github_api_token: '<%= @github_api_token %>'
 
 <%- end -%>
-<%= @r10k_sources_yaml %>
+<%- if @r10k_sources_yaml -%><%= @r10k_sources_yaml %><%- end -%>
