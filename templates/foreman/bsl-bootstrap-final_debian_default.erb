@@ -1,0 +1,9 @@
+###########################################
+# Init settings for bsl-bootstrap-final
+###########################################
+
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::foreman::config::init_service_puppet_log') %>'
+PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+PUPPET_LOGDEST='<%= scope.lookupvar('bsl_bootstrap::foreman::config::init_service_puppet_logger') %>'
+PUPPET_ENVIRONMENT='<%= scope.lookupvar('bsl_bootstrap::foreman::config::environment') %>'
+TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::foreman::config::target_certname') %>'
