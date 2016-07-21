@@ -26,6 +26,7 @@ class bsl_bootstrap::foreman::setup {
 
   class { '::bsl_puppet':
     server                   => 'true',
+    foreman                  => $bsl_bootstrap::foreman::config::manage_foreman,
     server_hostname          => $bsl_bootstrap::foreman::config::hostname,
     server_domain            => $bsl_bootstrap::foreman::config::domain,
     server_certname          => $bsl_bootstrap::foreman::config::target_certname,
@@ -35,7 +36,7 @@ class bsl_bootstrap::foreman::setup {
     manage_hiera             => $bsl_bootstrap::foreman::config::manage_hiera,
     manage_r10k              => $bsl_bootstrap::foreman::config::manage_r10k,
     manage_r10k_webhooks     => $bsl_bootstrap::foreman::config::r10k_manage_webhooks,
-    manage_puppetboard       => $bsl_bootstrap::foreman::config::manage_puppetboard,
+    manage_puppetboard       => 'false',
     manage_packages          => 'true',
     manage_dependencies      => 'true',
 
@@ -48,10 +49,6 @@ class bsl_bootstrap::foreman::setup {
     r10k_webhook_pass        => $bsl_bootstrap::foreman::config::r10k_webhook_pass,
     r10k_sources             => $bsl_bootstrap::foreman::config::r10k_sources,
 
-    puppetboard_user         => $bsl_bootstrap::foreman::config::puppetboard_user,
-    puppetboard_pass         => $bsl_bootstrap::foreman::config::puppetboard_pass,
-    puppetboard_fqdn          => $bsl_bootstrap::foreman::config::external_fqdn,
-
     config_via               => 'declare',
     manage_dependencies_via  => 'declare',
   }
@@ -59,7 +56,7 @@ class bsl_bootstrap::foreman::setup {
   class { 'bsl_bootstrap::foreman::done': }
 
   if $::bootstrapping == 'reboot' {
-    notify { 'bsl_bootstrap::foreman bootstrapping reboot needed': }
+    Class['bsl_bootstrap::foreman::done']
       ~>reboot{ 'bsl_bootstrapped': apply  => finished, require => Class['::bsl_puppet'] }
   }
 }

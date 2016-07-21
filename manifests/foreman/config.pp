@@ -50,16 +50,16 @@
 #
 class bsl_bootstrap::foreman::config(
   $manage_hiera = 'true',
+  $manage_foreman = 'false', # this will be resumed post-bootstrapping
   $manage_puppetdb = 'false',
   $manage_hostname = 'true',
-  $manage_puppetboard = 'false',
   $manage_r10k = 'true',
 
   $environment = 'production',
   $hostname = hiera('hostname', 'puppet'),
   $domain = hiera('domain', 'local'),
   $external_fqdn = hiera('external_fqdn', $::fqdn),
-  $foreman_fqdn = hiera('foreman', 'puppet'),
+  $puppetmaster_fqdn = hiera('puppetmaster', 'puppet'),
 
   $github_api_token = hiera('github_api_token', false),
   $default_admin_acct_name = hiera('default_admin_acct_name', 'admin'),
@@ -90,19 +90,11 @@ class bsl_bootstrap::foreman::config(
   $init_final_service_tmpl = $bsl_bootstrap::foreman::params::init_final_service_tmpl,
   $init_final_config       = $bsl_bootstrap::foreman::params::init_final_config,
   $init_final_config_tmpl  = $bsl_bootstrap::foreman::params::init_final_config_tmpl,
-
-  $puppetboard_user = hiera('default_admin_acct_name', 'admin'),
-  $puppetboard_pass = hiera('default_admin_acct_pass', 'admin'),
 ) inherits bsl_bootstrap::foreman::params {
   if empty($domain) {
     $target_certname = $hostname
   }
   else {
     $target_certname = "${hostname}.${domain}"
-  }
-
-  $hello_world = hiera('hello_world', false)
-  if $hello_world {
-    notify { '## bsl_bootstrap hello_world': message => $hello_world }
   }
 }

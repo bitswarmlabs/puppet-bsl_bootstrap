@@ -42,7 +42,7 @@ do_start () {
   echo "## ssl_dir: $ssl_dir" >> $LOGFILE
   echo "## certname: $certname" >> $LOGFILE
 
-  log_begin_msg 'Final bootstrap provisioning begins'
+log_begin_msg 'Final bootstrap provisioning begins'
   echo "
 ## Final bootstrap provisioning begins via puppet apply certname=${TARGET_CERTNAME} environment=${PUPPET_ENVIRONMENT}" >> $LOGFILE
 
@@ -81,6 +81,9 @@ do_start () {
   echo "## Resetting ownership of /opt/puppetlabs/puppet/cache"
   [ -e /opt/puppetlabs/puppet/cache ] && chown -c -R puppet:puppet /opt/puppetlabs/puppet/cache 2>&1 | tee -a $LOGFILE
 
+  echo "## Resetting ownership of /etc/puppetlabs/code"
+  [ -e /etc/puppetlabs/code ] && chown -c -R puppet:puppet /etc/puppetlabs/code 2>&1 | tee -a $LOGFILE
+
   log_begin_msg "Attempting puppet agent -t"
   echo "
 ## Attempting puppet agent -t run" >> $LOGFILE
@@ -92,9 +95,6 @@ do_start () {
   retval=$?
   set +x
 
-  echo "## Resetting ownership of /opt/puppetlabs/puppet/cache #2"
-  [ -e /opt/puppetlabs/puppet/cache ] && chown -c -R puppet:puppet /opt/puppetlabs/puppet/cache 2>&1 | tee -a $LOGFILE
-
   if [ $retval -ne 1 ]; then
     log_success_msg "success, calling for reboot"
     echo "## ... success, calling for reboot" >> $LOGFILE
@@ -104,6 +104,27 @@ do_start () {
     echo "## puppet agent non-zero return warning ($retval), rebooting to try again" >> $LOGFILE
     log_end_msg $retval
   fi
+
+  log_begin_msg "Installing Foreman"
+  echo "
+## Installing Foreman" >> $LOGFILE
+
+  set -x
+  foreman-installer -v \
+    --colors \
+    --puppet-hiera-config='/etc/puppetlabs/code/hiera.yaml' \
+    2>&1 | tee -a $LOGFILE
+  retval=$?
+  set +x
+
+  if [ $retval -eq 0 ]; then
+    log_success_msg "success!"
+    echo "## ... success!!" >> $LOGFILE
+  else
+    log_failure_msg "failed ($retval)"
+    echo "## foreman-install non-zero return ($retval)" >> $LOGFILE
+  fi
+  log_end_msg $retval
 
   if [ -e /etc/puppetlabs/code/bsl_bootstrap/bsl-bootstrap-final-was-here ]; then
     echo "## already rebooted in past, ignoring now" >> $LOGFILE

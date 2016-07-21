@@ -100,9 +100,4 @@ class bsl_bootstrap::puppetmaster::config(
   else {
     $target_certname = "${hostname}.${domain}"
   }
-
-  $hello_world = hiera('hello_world', false)
-  if $hello_world {
-    notify { '## bsl_bootstrap hello_world': message => $hello_world }
-  }
 }
