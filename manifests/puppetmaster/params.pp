@@ -3,8 +3,6 @@ class bsl_bootstrap::puppetmaster::params {
   # OS specific paths
   case $::osfamily {
     'RedHat': {
-      fail("${::hostname}: This module does not support osfamily ${::osfamily} version ${::operatingsystemrelease}")
-
       if $::operatingsystemmajrelease != '7' {
         $init_early_svc              = 'bsl-bootstrap-init'
         $init_early_service        = '/usr/lib/systemd/system/bsl-bootstrap-init.service'
