@@ -3,22 +3,17 @@ class bsl_bootstrap::puppetmaster::params {
   # OS specific paths
   case $::osfamily {
     'RedHat': {
-      if $::operatingsystemmajrelease != '7' {
-        $init_early_svc              = 'bsl-bootstrap-init'
-        $init_early_service        = '/usr/lib/systemd/system/bsl-bootstrap-init.service'
-        $init_early_config         = '/etc/sysconfig/bsl-bootstrap-init'
-        $init_early_service_tmpl   = 'bsl-bootstrap-init_redhat_service'
-        $init_early_config_tmpl    = 'bsl-bootstrap-init_redhat_sysconfig'
+      $init_early_svc              = 'bsl-bootstrap-init'
+      $init_early_service        = '/usr/lib/systemd/system/bsl-bootstrap-init.service'
+      $init_early_config         = '/etc/sysconfig/bsl-bootstrap-init'
+      $init_early_service_tmpl   = 'bsl-bootstrap-init_redhat_service'
+      $init_early_config_tmpl    = 'bsl-bootstrap-init_redhat_sysconfig'
 
-        $init_final_svc              = 'bsl-bootstrap-final'
-        $init_final_service        = '/usr/lib/systemd/system/bsl-bootstrap-final.service'
-        $init_final_config         = '/etc/sysconfig/bsl-bootstrap-final'
-        $init_final_service_tmpl   = 'bsl-bootstrap-final_redhat_service'
-        $init_final_config_tmpl    = 'bsl-bootstrap-final_redhat_sysconfig'
-      }
-      else {
-        fail("${::hostname}: This module does not support osfamily ${::osfamily} version ${::operatingsystemrelease}")
-      }
+      $init_final_svc              = 'bsl-bootstrap-final'
+      $init_final_service        = '/usr/lib/systemd/system/bsl-bootstrap-final.service'
+      $init_final_config         = '/etc/sysconfig/bsl-bootstrap-final'
+      $init_final_service_tmpl   = 'bsl-bootstrap-final_redhat_service'
+      $init_final_config_tmpl    = 'bsl-bootstrap-final_redhat_sysconfig'
     }
     'Debian': {
       $init_early_svc              = 'bsl-bootstrap-init'
