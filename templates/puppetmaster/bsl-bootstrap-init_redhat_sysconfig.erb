@@ -1,0 +1,9 @@
+###########################################
+# Init settings for bsl-bootstrap-init
+###########################################
+
+LOGFILE='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_log') %>'
+PUPPET='<%= scope.lookupvar('bsl_bootstrap::puppet_binary') %>'
+PUPPET_LOGDEST='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::init_service_puppet_logger') %>'
+PUPPET_ENVIRONMENT='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::environment') %>'
+TARGET_CERTNAME='<%= scope.lookupvar('bsl_bootstrap::puppetmaster::config::target_certname') %>'
